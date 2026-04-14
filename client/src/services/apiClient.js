@@ -1,23 +1,53 @@
 import axios from "axios";
 
-const apiBaseUrl =
+export const API_BASE_URL =
   import.meta.env.VITE_API_URL?.trim() || "http://localhost:5000/api";
 
+let accessTokenGetter = () => "";
+
+export function registerAccessTokenGetter(getter) {
+  accessTokenGetter = typeof getter === "function" ? getter : () => "";
+}
+
+export function getApiErrorMessage(error, fallbackMessage = "Request failed") {
+  const responseMessage = error?.response?.data?.message;
+  const validationMessage = error?.response?.data?.errors?.join?.("; ");
+
+  if (
+    typeof responseMessage === "string" &&
+    responseMessage.trim().length > 0
+  ) {
+    return responseMessage;
+  }
+
+  if (
+    typeof validationMessage === "string" &&
+    validationMessage.trim().length > 0
+  ) {
+    return validationMessage;
+  }
+
+  return fallbackMessage;
+}
+
 const apiClient = axios.create({
-  baseURL: apiBaseUrl,
+  baseURL: API_BASE_URL,
   withCredentials: true,
   timeout: 20000,
 });
 
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token refresh flow is added in Step 2 auth implementation.
-    }
+apiClient.interceptors.request.use((config) => {
+  const accessToken = accessTokenGetter();
 
-    return Promise.reject(error);
-  },
-);
+  if (accessToken) {
+    config.headers = config.headers || {};
+
+    if (!config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+  }
+
+  return config;
+});
 
 export default apiClient;

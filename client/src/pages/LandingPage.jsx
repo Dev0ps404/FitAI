@@ -1,39 +1,76 @@
 import ModulePreviewCard from "../components/common/ModulePreviewCard";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { getDashboardPathForRole } from "../utils/roleRoutes";
 
 const modulePreview = [
   {
-    title: "Workout Intelligence",
+    title: "Role Dashboards",
     description:
-      "Track sets, reps, load, and progression metrics with real-time updates across devices.",
-    status: "Workout Module",
+      "User, trainer, and admin interfaces are now connected to live backend APIs with access control.",
+    status: "Frontend Live",
   },
   {
-    title: "Diet and Macros",
+    title: "Secure Auth Flows",
     description:
-      "Log meals, monitor macros, and receive adaptive diet suggestions powered by AI.",
-    status: "Diet Module",
+      "Signup, login, Google OAuth callback, forgot password, and reset password are fully wired.",
+    status: "Auth",
   },
   {
-    title: "Coach Assistant",
+    title: "AI Coach Console",
     description:
-      "Chat with FitAI to get injury-safe recommendations personalized to your progress profile.",
-    status: "AI Trainer",
+      "Session-based AI chat and recommendation retrieval are integrated in the frontend experience.",
+    status: "AI + Data",
   },
 ];
 
 function LandingPage() {
+  const { isAuthenticated, authUser } = useAuth();
+
   return (
     <section className="space-y-10">
       <div className="glass-card overflow-hidden p-6 md:p-10">
-        <p className="neon-chip mb-5 inline-flex">Production Setup</p>
+        <p className="neon-chip mb-5 inline-flex">Step 3 Frontend</p>
         <h1 className="max-w-3xl font-heading text-4xl font-bold uppercase tracking-[0.07em] text-white md:text-6xl">
-          FitAI Smart Gym Management + AI Fitness Tracker
+          FitAI Dashboards, Authentication, And AI Experience
         </h1>
         <p className="mt-5 max-w-2xl text-sm leading-relaxed text-slate-300 md:text-base">
-          Step 1 completed scaffolding: MERN architecture, role-based app
-          routes, secure backend baseline, and neon-dark UI framework for full
-          feature development.
+          Frontend is now connected to your production backend modules for
+          workouts, nutrition, progress analytics, bookings, trainer approvals,
+          notifications, and AI conversations.
         </p>
+
+        <div className="mt-7 flex flex-wrap gap-3">
+          {isAuthenticated ? (
+            <Link
+              to={getDashboardPathForRole(authUser?.role)}
+              className="rounded-full border border-neon-cyan bg-neon-cyan/20 px-5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-neon-cyan transition hover:bg-neon-cyan/30 md:text-sm"
+            >
+              Open Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="rounded-full border border-neon-cyan bg-neon-cyan/20 px-5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-neon-cyan transition hover:bg-neon-cyan/30 md:text-sm"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="rounded-full border border-neon-lime bg-neon-lime/20 px-5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-neon-lime transition hover:bg-neon-lime/30 md:text-sm"
+              >
+                Create Account
+              </Link>
+            </>
+          )}
+          <Link
+            to="/ai-trainer"
+            className="rounded-full border border-slate-600 bg-slate-900/40 px-5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-200 transition hover:border-slate-500 md:text-sm"
+          >
+            Explore AI Coach
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-5 md:grid-cols-3">
