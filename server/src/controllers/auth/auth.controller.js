@@ -16,6 +16,12 @@ const {
   revokeAllUserRefreshTokens,
 } = require('../../services/token.service')
 const {
+  getDevUserByEmail,
+  createDevUser,
+  verifyDevUserPassword,
+  touchDevUserLogin,
+} = require('../../services/devAuthStore')
+const {
   setRefreshTokenCookie,
   clearRefreshTokenCookie,
 } = require('../../utils/authCookies')
@@ -37,6 +43,20 @@ function getRefreshTokenFromRequest(req) {
 
 async function sendAuthResponse({ req, res, user, statusCode, message }) {
   const accessToken = signAccessToken(user)
+
+  if (env.SKIP_DB_CONNECTION) {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data: {
+        accessToken,
+        user: sanitizeUser(user),
+      },
+    })
+
+    return
+  }
+
   const refreshTokenPayload = await issueRefreshToken({
     user,
     ipAddress: req.ip,
@@ -61,6 +81,31 @@ async function sendAuthResponse({ req, res, user, statusCode, message }) {
 
 const signup = asyncHandler(async (req, res) => {
   const payload = req.validatedBody || req.body
+
+  if (env.SKIP_DB_CONNECTION) {
+    const existingUser = getDevUserByEmail(payload.email)
+
+    if (existingUser) {
+      throw new ApiError(409, 'Email is already registered')
+    }
+
+    const user = await createDevUser({
+      name: payload.name,
+      email: payload.email,
+      password: payload.password,
+      role: payload.role,
+    })
+
+    await sendAuthResponse({
+      req,
+      res,
+      user,
+      statusCode: 201,
+      message: 'Signup successful',
+    })
+
+    return
+  }
 
   const existingUser = await User.findOne({ email: payload.email })
 
@@ -100,6 +145,36 @@ const signup = asyncHandler(async (req, res) => {
 const login = asyncHandler(async (req, res) => {
   const payload = req.validatedBody || req.body
 
+  if (env.SKIP_DB_CONNECTION) {
+    const user = getDevUserByEmail(payload.email)
+
+    if (!user) {
+      throw new ApiError(401, 'Invalid email or password')
+    }
+
+    const isPasswordValid = await verifyDevUserPassword(user, payload.password)
+
+    if (!isPasswordValid) {
+      throw new ApiError(401, 'Invalid email or password')
+    }
+
+    if (!user.isActive) {
+      throw new ApiError(403, 'Your account is currently disabled')
+    }
+
+    touchDevUserLogin(user)
+
+    await sendAuthResponse({
+      req,
+      res,
+      user,
+      statusCode: 200,
+      message: 'Login successful',
+    })
+
+    return
+  }
+
   const user = await User.findOne({ email: payload.email }).select(
     '+passwordHash',
   )
@@ -133,6 +208,11 @@ const login = asyncHandler(async (req, res) => {
 })
 
 const refreshSession = asyncHandler(async (req, res) => {
+  if (env.SKIP_DB_CONNECTION) {
+    clearRefreshTokenCookie(res)
+    throw new ApiError(401, 'Session refresh unavailable in SKIP_DB mode')
+  }
+
   const refreshToken = getRefreshTokenFromRequest(req)
 
   if (!refreshToken) {
@@ -182,6 +262,17 @@ const refreshSession = asyncHandler(async (req, res) => {
 })
 
 const logout = asyncHandler(async (req, res) => {
+  if (env.SKIP_DB_CONNECTION) {
+    clearRefreshTokenCookie(res)
+
+    res.status(200).json({
+      success: true,
+      message: 'Logged out successfully',
+    })
+
+    return
+  }
+
   const refreshToken = getRefreshTokenFromRequest(req)
 
   if (refreshToken) {
@@ -197,6 +288,17 @@ const logout = asyncHandler(async (req, res) => {
 })
 
 const logoutAll = asyncHandler(async (req, res) => {
+  if (env.SKIP_DB_CONNECTION) {
+    clearRefreshTokenCookie(res)
+
+    res.status(200).json({
+      success: true,
+      message: 'All sessions were logged out',
+    })
+
+    return
+  }
+
   await revokeAllUserRefreshTokens(req.user._id, 'logout_all')
   clearRefreshTokenCookie(res)
 

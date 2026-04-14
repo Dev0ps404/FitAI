@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const { env } = require('../config/env')
 const { verifyAccessToken } = require('../services/token.service')
+const { getDevUserById } = require('../services/devAuthStore')
 const ApiError = require('../utils/apiError')
 
 function getAccessTokenFromRequest(req) {
@@ -27,7 +28,9 @@ async function requireAuth(req, _res, next) {
 
     const decoded = verifyAccessToken(accessToken)
 
-    const user = await User.findById(decoded.sub).select('-passwordHash')
+    const user = env.SKIP_DB_CONNECTION
+      ? getDevUserById(decoded.sub)
+      : await User.findById(decoded.sub).select('-passwordHash')
 
     if (!user || !user.isActive) {
       throw new ApiError(401, 'Session is invalid')
