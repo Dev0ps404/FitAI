@@ -1,11 +1,11 @@
 function EmptyState({ title, description }) {
   return (
-    <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/30 p-6 text-center">
-      <p className="font-heading text-xl font-semibold uppercase tracking-[0.06em] text-white">
+    <div className="rounded-xl border border-dashed border-sky-200 bg-white/75 p-6 text-center">
+      <p className="font-heading text-xl font-semibold uppercase tracking-[0.06em] text-slate-900">
         {title}
       </p>
       {description ? (
-        <p className="mt-2 text-sm text-slate-300">{description}</p>
+        <p className="mt-2 text-sm text-slate-700">{description}</p>
       ) : null}
     </div>
   );

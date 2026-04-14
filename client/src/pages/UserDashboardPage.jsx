@@ -98,10 +98,10 @@ function UserDashboardPage() {
     <section className="space-y-5">
       <div className="glass-card p-6 md:p-8">
         <p className="neon-chip mb-4 inline-flex">User Control Center</p>
-        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] text-white md:text-4xl">
+        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] text-slate-900 md:text-4xl">
           Your Performance Pulse
         </h1>
-        <p className="mt-3 text-sm text-slate-300 md:text-base">
+        <p className="mt-3 text-sm text-slate-700 md:text-base">
           Monitor workout consistency, nutrition totals, and progress momentum
           in one place.
         </p>
@@ -152,20 +152,21 @@ function UserDashboardPage() {
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={progressChartData}>
-                  <CartesianGrid stroke="#1f2d41" strokeDasharray="4 4" />
-                  <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
-                  <YAxis stroke="#94a3b8" fontSize={12} />
+                  <CartesianGrid stroke="#bae6fd" strokeDasharray="4 4" />
+                  <XAxis dataKey="date" stroke="#475569" fontSize={12} />
+                  <YAxis stroke="#475569" fontSize={12} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#0b1324",
-                      border: "1px solid #334155",
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #7dd3fc",
                       borderRadius: "12px",
+                      color: "#0f172a",
                     }}
                   />
                   <Line
                     type="monotone"
                     dataKey="weight"
-                    stroke="#00f5d4"
+                    stroke="#0891b2"
                     strokeWidth={3}
                     dot={{ r: 3 }}
                     activeDot={{ r: 5 }}
@@ -183,7 +184,7 @@ function UserDashboardPage() {
           <form className="space-y-4" onSubmit={handleLogProgress}>
             <div>
               <label
-                className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-400"
+                className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-600"
                 htmlFor="weightKg"
               >
                 Current Weight (kg)
@@ -195,14 +196,14 @@ function UserDashboardPage() {
                 step="0.1"
                 value={weightKg}
                 onChange={(event) => setWeightKg(event.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-sm text-white outline-none transition focus:border-neon-cyan"
+                className="w-full rounded-xl border border-sky-200 bg-white/90 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-neon-cyan"
                 placeholder="78.4"
               />
             </div>
 
             <div>
               <label
-                className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-400"
+                className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-600"
                 htmlFor="progressNotes"
               >
                 Notes (optional)
@@ -212,7 +213,7 @@ function UserDashboardPage() {
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
                 rows={3}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-sm text-white outline-none transition focus:border-neon-cyan"
+                className="w-full rounded-xl border border-sky-200 bg-white/90 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-neon-cyan"
                 placeholder="Energy improving this week."
               />
             </div>
@@ -227,7 +228,7 @@ function UserDashboardPage() {
           </form>
 
           {feedback ? (
-            <p className="mt-3 rounded-lg border border-slate-700 bg-slate-900/40 px-3 py-2 text-xs text-slate-200">
+            <p className="mt-3 rounded-lg border border-sky-200 bg-white/80 px-3 py-2 text-xs text-slate-700">
               {feedback}
             </p>
           ) : null}
@@ -248,17 +249,17 @@ function UserDashboardPage() {
             {recentWorkouts.map((workout) => (
               <article
                 key={workout._id}
-                className="rounded-xl border border-slate-700 bg-slate-900/40 p-4"
+                className="rounded-xl border border-sky-200 bg-white/80 p-4"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-white">
+                  <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-slate-900">
                     {workout.name}
                   </h3>
                   <span className="rounded-full border border-neon-cyan/40 px-3 py-1 text-xs uppercase tracking-[0.14em] text-neon-cyan">
                     {workout.status || "planned"}
                   </span>
                 </div>
-                <p className="mt-2 text-sm text-slate-300">
+                <p className="mt-2 text-sm text-slate-700">
                   {formatDateLabel(workout.date)} •{" "}
                   {workout.exercises?.length || 0} exercises
                 </p>

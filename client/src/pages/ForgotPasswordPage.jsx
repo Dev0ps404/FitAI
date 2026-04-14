@@ -48,17 +48,17 @@ function ForgotPasswordPage() {
     <section className="mx-auto w-full max-w-xl">
       <div className="glass-card p-6 md:p-8">
         <p className="neon-chip mb-5 inline-flex">Account Recovery</p>
-        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.06em] text-white">
+        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.06em] text-slate-900">
           Forgot Password
         </h1>
-        <p className="mt-3 text-sm text-slate-300">
+        <p className="mt-3 text-sm text-slate-700">
           Enter your account email and we will send a secure reset link.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label
-              className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-400"
+              className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-600"
               htmlFor="email"
             >
               Email
@@ -67,7 +67,7 @@ function ForgotPasswordPage() {
               id="email"
               type="email"
               autoComplete="email"
-              className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-sm text-white outline-none transition focus:border-neon-cyan"
+              className="w-full rounded-xl border border-sky-200 bg-white/90 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-neon-cyan"
               {...register("email")}
             />
             {errors.email ? (
@@ -87,12 +87,12 @@ function ForgotPasswordPage() {
         </form>
 
         {feedback ? (
-          <div className="mt-4 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm text-slate-200">
+          <div className="mt-4 rounded-xl border border-sky-200 bg-white/80 px-4 py-3 text-sm text-slate-700">
             {feedback}
           </div>
         ) : null}
 
-        <p className="mt-6 text-sm text-slate-300">
+        <p className="mt-6 text-sm text-slate-700">
           Remembered your password?{" "}
           <Link to="/login" className="text-neon-cyan hover:text-neon-lime">
             Back to login

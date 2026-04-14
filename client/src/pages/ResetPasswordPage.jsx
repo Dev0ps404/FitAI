@@ -72,17 +72,17 @@ function ResetPasswordPage() {
     <section className="mx-auto w-full max-w-xl">
       <div className="glass-card p-6 md:p-8">
         <p className="neon-chip mb-5 inline-flex">Secure Reset</p>
-        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.06em] text-white">
+        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.06em] text-slate-900">
           Set New Password
         </h1>
-        <p className="mt-3 text-sm text-slate-300">
+        <p className="mt-3 text-sm text-slate-700">
           Create a strong password to protect your FitAI account.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label
-              className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-400"
+              className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-600"
               htmlFor="newPassword"
             >
               New Password
@@ -91,7 +91,7 @@ function ResetPasswordPage() {
               id="newPassword"
               type="password"
               autoComplete="new-password"
-              className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-sm text-white outline-none transition focus:border-neon-cyan"
+              className="w-full rounded-xl border border-sky-200 bg-white/90 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-neon-cyan"
               {...register("newPassword")}
             />
             {errors.newPassword ? (
@@ -103,7 +103,7 @@ function ResetPasswordPage() {
 
           <div>
             <label
-              className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-400"
+              className="mb-2 block text-xs uppercase tracking-[0.16em] text-slate-600"
               htmlFor="confirmPassword"
             >
               Confirm Password
@@ -112,7 +112,7 @@ function ResetPasswordPage() {
               id="confirmPassword"
               type="password"
               autoComplete="new-password"
-              className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-sm text-white outline-none transition focus:border-neon-cyan"
+              className="w-full rounded-xl border border-sky-200 bg-white/90 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-neon-cyan"
               {...register("confirmPassword")}
             />
             {errors.confirmPassword ? (
@@ -132,12 +132,12 @@ function ResetPasswordPage() {
         </form>
 
         {feedback ? (
-          <div className="mt-4 rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-3 text-sm text-slate-200">
+          <div className="mt-4 rounded-xl border border-sky-200 bg-white/80 px-4 py-3 text-sm text-slate-700">
             {feedback}
           </div>
         ) : null}
 
-        <p className="mt-6 text-sm text-slate-300">
+        <p className="mt-6 text-sm text-slate-700">
           <Link to="/login" className="text-neon-cyan hover:text-neon-lime">
             Return to login
           </Link>

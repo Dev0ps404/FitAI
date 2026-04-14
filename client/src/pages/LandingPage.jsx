@@ -31,10 +31,10 @@ function LandingPage() {
     <section className="space-y-10">
       <div className="glass-card overflow-hidden p-6 md:p-10">
         <p className="neon-chip mb-5 inline-flex">Step 3 Frontend</p>
-        <h1 className="max-w-3xl font-heading text-4xl font-bold uppercase tracking-[0.07em] text-white md:text-6xl">
+        <h1 className="max-w-3xl font-heading text-4xl font-bold uppercase tracking-[0.07em] text-slate-900 md:text-6xl">
           FitAI Dashboards, Authentication, And AI Experience
         </h1>
-        <p className="mt-5 max-w-2xl text-sm leading-relaxed text-slate-300 md:text-base">
+        <p className="mt-5 max-w-2xl text-sm leading-relaxed text-slate-700 md:text-base">
           Frontend is now connected to your production backend modules for
           workouts, nutrition, progress analytics, bookings, trainer approvals,
           notifications, and AI conversations.
@@ -66,7 +66,7 @@ function LandingPage() {
           )}
           <Link
             to="/ai-trainer"
-            className="rounded-full border border-slate-600 bg-slate-900/40 px-5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-200 transition hover:border-slate-500 md:text-sm"
+            className="rounded-full border border-sky-300 bg-white/80 px-5 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:border-sky-400 md:text-sm"
           >
             Explore AI Coach
           </Link>

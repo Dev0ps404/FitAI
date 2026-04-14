@@ -59,10 +59,10 @@ function AdminDashboardPage() {
     <section className="space-y-5">
       <div className="glass-card p-6 md:p-8">
         <p className="neon-chip mb-4 inline-flex">Admin Console</p>
-        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] text-white md:text-4xl">
+        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] text-slate-900 md:text-4xl">
           Platform Oversight And Approvals
         </h1>
-        <p className="mt-3 text-sm text-slate-300 md:text-base">
+        <p className="mt-3 text-sm text-slate-700 md:text-base">
           Monitor growth metrics, review trainer applications, and keep
           operations healthy.
         </p>
@@ -122,14 +122,14 @@ function AdminDashboardPage() {
               return (
                 <article
                   key={application._id}
-                  className="rounded-xl border border-slate-700 bg-slate-900/40 p-4"
+                  className="rounded-xl border border-sky-200 bg-white/80 p-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-white">
+                      <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-slate-900">
                         {applicant?.name || "Unknown Applicant"}
                       </h3>
-                      <p className="text-sm text-slate-300">
+                      <p className="text-sm text-slate-700">
                         {applicant?.email || "No email"}
                       </p>
                     </div>
@@ -138,7 +138,7 @@ function AdminDashboardPage() {
                     </span>
                   </div>
 
-                  <div className="mt-3 grid gap-1 text-sm text-slate-300 md:grid-cols-2">
+                  <div className="mt-3 grid gap-1 text-sm text-slate-700 md:grid-cols-2">
                     <p>
                       Experience: {application.yearsOfExperience || 0} years
                     </p>

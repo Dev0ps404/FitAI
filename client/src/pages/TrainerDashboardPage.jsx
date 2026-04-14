@@ -79,10 +79,10 @@ function TrainerDashboardPage() {
     <section className="space-y-5">
       <div className="glass-card p-6 md:p-8">
         <p className="neon-chip mb-4 inline-flex">Trainer Console</p>
-        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] text-white md:text-4xl">
+        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] text-slate-900 md:text-4xl">
           Client And Booking Management
         </h1>
-        <p className="mt-3 text-sm text-slate-300 md:text-base">
+        <p className="mt-3 text-sm text-slate-700 md:text-base">
           Track active clients and update booking states in real time.
         </p>
       </div>
@@ -129,12 +129,12 @@ function TrainerDashboardPage() {
               {clients.map((client) => (
                 <article
                   key={client._id}
-                  className="rounded-xl border border-slate-700 bg-slate-900/40 p-4"
+                  className="rounded-xl border border-sky-200 bg-white/80 p-4"
                 >
-                  <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-white">
+                  <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-slate-900">
                     {client.name}
                   </h3>
-                  <p className="mt-1 text-sm text-slate-300">{client.email}</p>
+                  <p className="mt-1 text-sm text-slate-700">{client.email}</p>
                 </article>
               ))}
             </div>
@@ -166,20 +166,20 @@ function TrainerDashboardPage() {
                 return (
                   <article
                     key={booking._id}
-                    className="rounded-xl border border-slate-700 bg-slate-900/40 p-4"
+                    className="rounded-xl border border-sky-200 bg-white/80 p-4"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-white">
+                      <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-slate-900">
                         {booking.user?.name || "Client"}
                       </h3>
                       <span className="rounded-full border border-neon-cyan/40 px-3 py-1 text-xs uppercase tracking-[0.14em] text-neon-cyan">
                         {booking.status}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-slate-300">
+                    <p className="mt-2 text-sm text-slate-700">
                       {bookingDateRange}
                     </p>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="mt-1 text-sm text-slate-600">
                       {booking.user?.email || "No email"}
                     </p>
 

@@ -8,13 +8,13 @@ function StatCard({ title, value, subtitle, tone = "cyan" }) {
 
   return (
     <article className="glass-card p-5">
-      <p className="mb-3 text-xs uppercase tracking-[0.18em] text-slate-400">
+      <p className="mb-3 text-xs uppercase tracking-[0.18em] text-slate-600">
         {title}
       </p>
       <p className={`mb-1 text-3xl font-bold tracking-tight ${toneClass}`}>
         {value}
       </p>
-      {subtitle ? <p className="text-sm text-slate-300">{subtitle}</p> : null}
+      {subtitle ? <p className="text-sm text-slate-700">{subtitle}</p> : null}
     </article>
   );
 }

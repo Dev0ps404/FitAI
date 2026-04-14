@@ -55,10 +55,10 @@ function OAuthCallbackPage() {
       <p className="text-sm uppercase tracking-[0.2em] text-neon-amber">
         OAuth Error
       </p>
-      <h1 className="mt-3 font-heading text-3xl font-bold uppercase tracking-[0.08em] text-white">
+      <h1 className="mt-3 font-heading text-3xl font-bold uppercase tracking-[0.08em] text-slate-900">
         Unable To Complete Login
       </h1>
-      <p className="mt-4 text-sm text-slate-300">{errorMessage}</p>
+      <p className="mt-4 text-sm text-slate-700">{errorMessage}</p>
       <button
         type="button"
         onClick={() => navigate("/login", { replace: true })}

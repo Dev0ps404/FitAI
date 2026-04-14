@@ -97,10 +97,10 @@ function AiTrainerPage() {
     <section className="space-y-5">
       <div className="glass-card p-6 md:p-8">
         <p className="neon-chip mb-4 inline-flex">AI Coach</p>
-        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] text-white md:text-4xl">
+        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] text-slate-900 md:text-4xl">
           Context-Aware Fitness Assistant
         </h1>
-        <p className="mt-3 text-sm text-slate-300 md:text-base">
+        <p className="mt-3 text-sm text-slate-700 md:text-base">
           Chat with FitAI, manage session history, and review personalized
           recommendation signals.
         </p>
@@ -128,13 +128,13 @@ function AiTrainerPage() {
                         "w-full rounded-xl border px-4 py-3 text-left transition",
                         isActive
                           ? "border-neon-cyan bg-neon-cyan/10"
-                          : "border-slate-700 bg-slate-900/40 hover:border-slate-500",
+                          : "border-sky-200 bg-white/80 hover:border-sky-400",
                       ].join(" ")}
                     >
-                      <p className="font-heading text-sm uppercase tracking-[0.05em] text-white">
+                      <p className="font-heading text-sm uppercase tracking-[0.05em] text-slate-900">
                         {session.title || "Untitled Session"}
                       </p>
-                      <p className="mt-1 text-xs text-slate-400">
+                      <p className="mt-1 text-xs text-slate-600">
                         Updated {formatDateLabel(session.updatedAt)}
                       </p>
                     </button>
@@ -155,12 +155,12 @@ function AiTrainerPage() {
                 {recommendations.map((item) => (
                   <article
                     key={item.type}
-                    className="rounded-xl border border-slate-700 bg-slate-900/40 p-4"
+                    className="rounded-xl border border-sky-200 bg-white/80 p-4"
                   >
                     <p className="text-xs uppercase tracking-[0.16em] text-neon-lime">
                       {item.type}
                     </p>
-                    <p className="mt-2 text-sm text-slate-200">{item.message}</p>
+                    <p className="mt-2 text-sm text-slate-700">{item.message}</p>
                   </article>
                 ))}
               </div>
@@ -186,13 +186,13 @@ function AiTrainerPage() {
                       "rounded-xl border p-4",
                       isUserMessage
                         ? "border-neon-cyan/40 bg-neon-cyan/10"
-                        : "border-slate-700 bg-slate-900/40",
+                        : "border-sky-200 bg-white/80",
                     ].join(" ")}
                   >
-                    <p className="mb-2 text-xs uppercase tracking-[0.16em] text-slate-400">
+                    <p className="mb-2 text-xs uppercase tracking-[0.16em] text-slate-600">
                       {isUserMessage ? "You" : "FitAI"}
                     </p>
-                    <p className="whitespace-pre-wrap text-sm text-slate-100">{message.content}</p>
+                    <p className="whitespace-pre-wrap text-sm text-slate-900">{message.content}</p>
                   </article>
                 );
               })
@@ -204,7 +204,7 @@ function AiTrainerPage() {
               value={messageInput}
               onChange={(event) => setMessageInput(event.target.value)}
               rows={4}
-              className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-3 text-sm text-white outline-none transition focus:border-neon-cyan"
+              className="w-full rounded-xl border border-sky-200 bg-white/90 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-neon-cyan"
               placeholder="Ask FitAI: Build a 4-day workout split for fat loss with knee-safe alternatives."
             />
 
@@ -231,7 +231,7 @@ function AiTrainerPage() {
           </form>
 
           {feedback ? (
-            <p className="mt-3 rounded-lg border border-slate-700 bg-slate-900/40 px-3 py-2 text-xs text-slate-200">
+            <p className="mt-3 rounded-lg border border-sky-200 bg-white/80 px-3 py-2 text-xs text-slate-700">
               {feedback}
             </p>
           ) : null}

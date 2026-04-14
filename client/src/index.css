@@ -6,27 +6,33 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   * {
-    @apply border-slate-700;
+    @apply border-sky-200;
   }
 
   body {
-    @apply min-h-screen bg-ink font-body text-slate-100 antialiased;
+    @apply min-h-screen bg-ink font-body text-slate-900 antialiased;
     background-image:
       radial-gradient(
-        circle at 14% 18%,
-        rgba(0, 245, 212, 0.2),
+        circle at 12% 15%,
+        rgba(56, 189, 248, 0.38),
+        transparent 34%
+      ),
+      radial-gradient(
+        circle at 82% 14%,
+        rgba(250, 204, 21, 0.3),
         transparent 32%
       ),
       radial-gradient(
-        circle at 80% 16%,
-        rgba(158, 240, 26, 0.12),
-        transparent 28%
+        circle at 18% 84%,
+        rgba(244, 114, 182, 0.22),
+        transparent 35%
       ),
-      linear-gradient(145deg, #060a12 0%, #0b1324 45%, #0a1429 100%);
+      linear-gradient(145deg, #f8fbff 0%, #ecf7ff 46%, #fff6d8 100%);
+    background-attachment: fixed;
   }
 
   #root {
@@ -36,10 +42,10 @@
 
 @layer components {
   .glass-card {
-    @apply rounded-2xl border border-slate-700/70 bg-glass backdrop-blur-xl shadow-glass;
+    @apply rounded-2xl border border-sky-200/90 bg-glass backdrop-blur-xl shadow-glass;
   }
 
   .neon-chip {
-    @apply rounded-full border border-neon-cyan/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-neon-cyan;
+    @apply rounded-full border border-neon-cyan/70 bg-white/75 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-neon-cyan;
   }
 }

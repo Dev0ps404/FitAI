@@ -82,7 +82,7 @@ function AppShell({ children }) {
           <span className="rounded-xl border border-neon-cyan/70 bg-neon-cyan/10 px-3 py-2 font-heading text-lg font-bold tracking-wide text-neon-cyan shadow-neon">
             FitAI
           </span>
-          <span className="text-xs uppercase tracking-[0.22em] text-slate-400">
+          <span className="text-xs uppercase tracking-[0.22em] text-slate-600">
             Smart Gym Platform
           </span>
         </Link>
@@ -97,7 +97,7 @@ function AppShell({ children }) {
                   "inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] transition md:text-sm",
                   isActive
                     ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan shadow-neon"
-                    : "border-slate-700 bg-slate-900/40 text-slate-300 hover:border-slate-500",
+                    : "border-sky-200 bg-white/80 text-slate-700 hover:border-sky-400",
                 ].join(" ")
               }
             >
@@ -114,7 +114,7 @@ function AppShell({ children }) {
                     "inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] transition md:text-sm",
                     isActive
                       ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan"
-                      : "border-slate-700 bg-slate-900/40 text-slate-300 hover:border-slate-500",
+                      : "border-sky-200 bg-white/80 text-slate-700 hover:border-sky-400",
                   ].join(" ")
                 }
               >
@@ -129,7 +129,7 @@ function AppShell({ children }) {
                     "inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] transition md:text-sm",
                     isActive
                       ? "border-neon-lime bg-neon-lime/20 text-neon-lime"
-                      : "border-slate-700 bg-slate-900/40 text-slate-300 hover:border-slate-500",
+                      : "border-sky-200 bg-white/80 text-slate-700 hover:border-sky-400",
                   ].join(" ")
                 }
               >
@@ -144,7 +144,7 @@ function AppShell({ children }) {
               type="button"
               onClick={handleLogout}
               disabled={isAuthBusy}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/40 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-300 transition hover:border-slate-500 disabled:cursor-not-allowed disabled:opacity-70 md:text-sm"
+              className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/80 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-700 transition hover:border-sky-400 disabled:cursor-not-allowed disabled:opacity-70 md:text-sm"
             >
               <LogOut size={14} />
               Logout
@@ -154,7 +154,7 @@ function AppShell({ children }) {
       </header>
 
       {isAuthenticated ? (
-        <div className="mb-5 flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/40 px-4 py-3 text-xs uppercase tracking-[0.14em] text-slate-400">
+        <div className="mb-5 flex items-center justify-between rounded-xl border border-sky-200/90 bg-white/80 px-4 py-3 text-xs uppercase tracking-[0.14em] text-slate-600">
           <span>{authUser?.name || "FitAI User"}</span>
           <span className="text-neon-cyan">{getRoleLabel(authUser?.role)}</span>
         </div>
@@ -162,7 +162,7 @@ function AppShell({ children }) {
 
       <main className="flex-1">{children}</main>
 
-      <footer className="mt-8 border-t border-slate-800 pt-5 text-center text-xs tracking-[0.14em] text-slate-500">
+      <footer className="mt-8 border-t border-sky-200/90 pt-5 text-center text-xs tracking-[0.14em] text-slate-600">
         FITAI STEP 3 FRONTEND ACTIVE
       </footer>
     </div>

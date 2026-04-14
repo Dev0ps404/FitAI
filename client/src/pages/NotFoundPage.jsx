@@ -6,10 +6,10 @@ function NotFoundPage() {
       <p className="text-6xl font-heading font-bold tracking-[0.1em] text-neon-amber">
         404
       </p>
-      <h1 className="mt-3 font-heading text-3xl font-bold uppercase tracking-[0.08em] text-white">
+      <h1 className="mt-3 font-heading text-3xl font-bold uppercase tracking-[0.08em] text-slate-900">
         Route Not Found
       </h1>
-      <p className="mt-3 text-sm text-slate-300 md:text-base">
+      <p className="mt-3 text-sm text-slate-700 md:text-base">
         The page you requested does not exist in this setup stage.
       </p>
       <Link
