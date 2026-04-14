@@ -1,0 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Sora:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-slate-700;
+  }
+
+  body {
+    @apply min-h-screen bg-ink font-body text-slate-100 antialiased;
+    background-image:
+      radial-gradient(
+        circle at 14% 18%,
+        rgba(0, 245, 212, 0.2),
+        transparent 32%
+      ),
+      radial-gradient(
+        circle at 80% 16%,
+        rgba(158, 240, 26, 0.12),
+        transparent 28%
+      ),
+      linear-gradient(145deg, #060a12 0%, #0b1324 45%, #0a1429 100%);
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply rounded-2xl border border-slate-700/70 bg-glass backdrop-blur-xl shadow-glass;
+  }
+
+  .neon-chip {
+    @apply rounded-full border border-neon-cyan/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-neon-cyan;
+  }
+}
