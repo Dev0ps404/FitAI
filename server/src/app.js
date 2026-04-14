@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser')
 const express = require('express')
 const helmet = require('helmet')
 const morgan = require('morgan')
+const { passport, configurePassport } = require('./config/passport')
 const { rateLimit } = require('express-rate-limit')
 const { env } = require('./config/env')
 const { errorHandler } = require('./middlewares/errorHandler')
@@ -18,7 +19,10 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 })
 
+configurePassport()
+
 app.disable('x-powered-by')
+app.set('trust proxy', 1)
 
 app.use(helmet())
 app.use(
@@ -28,9 +32,10 @@ app.use(
   }),
 )
 app.use(morgan(env.NODE_ENV === 'development' ? 'dev' : 'combined'))
-app.use(express.json({ limit: '1mb' }))
-app.use(express.urlencoded({ extended: true, limit: '1mb' }))
+app.use(express.json({ limit: '2mb' }))
+app.use(express.urlencoded({ extended: true, limit: '2mb' }))
 app.use(cookieParser())
+app.use(passport.initialize())
 app.use('/api', apiLimiter, apiRouter)
 
 app.get('/', (_req, res) => {

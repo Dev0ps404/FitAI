@@ -7,14 +7,42 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(5000),
   CLIENT_ORIGIN: z.string().default('http://localhost:5173'),
   MONGODB_URI: z.string().default('mongodb://127.0.0.1:27017/fitai'),
+  DB_MAX_POOL_SIZE: z.coerce.number().int().positive().default(20),
+  DB_MIN_POOL_SIZE: z.coerce.number().int().min(0).default(2),
+  DB_SERVER_SELECTION_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(8000),
   JWT_ACCESS_SECRET: z
     .string()
     .default('fitai-local-access-secret-change-this-in-production'),
+  JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_SECRET: z
     .string()
     .default('fitai-local-refresh-secret-change-this-in-production'),
+  JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
+  REFRESH_COOKIE_NAME: z.string().default('fitai_refresh_token'),
+  ACCESS_COOKIE_NAME: z.string().default('fitai_access_token'),
+  COOKIE_SECURE: z.coerce.boolean().default(false),
+  COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
+  PASSWORD_RESET_TOKEN_TTL_MINUTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(30),
+  PASSWORD_RESET_URL: z
+    .string()
+    .default('http://localhost:5173/reset-password'),
+  OAUTH_SUCCESS_REDIRECT: z
+    .string()
+    .default('http://localhost:5173/oauth/callback'),
+  OAUTH_FAILURE_REDIRECT: z
+    .string()
+    .default('http://localhost:5173/login?oauth=failed'),
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_MODEL: z.string().default('gpt-4.1-mini'),
+  AI_MAX_HISTORY_MESSAGES: z.coerce.number().int().min(4).max(100).default(24),
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CALLBACK_URL: z

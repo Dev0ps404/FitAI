@@ -1,8 +1,26 @@
 const { Router } = require('express')
 const healthRouter = require('./health.routes')
+const authRouter = require('./auth.routes')
+const workoutRouter = require('./workout.routes')
+const dietRouter = require('./diet.routes')
+const progressRouter = require('./progress.routes')
+const trainerRouter = require('./trainer.routes')
+const bookingRouter = require('./booking.routes')
+const notificationRouter = require('./notification.routes')
+const adminRouter = require('./admin.routes')
+const aiRouter = require('./ai.routes')
 
 const apiRouter = Router()
 
 apiRouter.use('/health', healthRouter)
+apiRouter.use('/auth', authRouter)
+apiRouter.use('/workouts', workoutRouter)
+apiRouter.use('/diet', dietRouter)
+apiRouter.use('/progress', progressRouter)
+apiRouter.use('/trainers', trainerRouter)
+apiRouter.use('/bookings', bookingRouter)
+apiRouter.use('/notifications', notificationRouter)
+apiRouter.use('/admin', adminRouter)
+apiRouter.use('/ai', aiRouter)
 
 module.exports = apiRouter

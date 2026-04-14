@@ -10,8 +10,11 @@ async function connectToDatabase() {
   mongoose.set('strictQuery', true)
 
   await mongoose.connect(env.MONGODB_URI, {
-    maxPoolSize: 20,
-    serverSelectionTimeoutMS: 8000,
+    maxPoolSize: env.DB_MAX_POOL_SIZE,
+    minPoolSize: env.DB_MIN_POOL_SIZE,
+    maxIdleTimeMS: 30_000,
+    socketTimeoutMS: 45_000,
+    serverSelectionTimeoutMS: env.DB_SERVER_SELECTION_TIMEOUT_MS,
   })
 
   console.info('[DB] MongoDB connected')
