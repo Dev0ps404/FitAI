@@ -20,6 +20,16 @@ const authApi = {
     return getResponseData(response);
   },
 
+  async updateMe(payload) {
+    const response = await apiClient.patch("/auth/me", payload);
+    return getResponseData(response);
+  },
+
+  async changePassword(payload) {
+    const response = await apiClient.patch("/auth/change-password", payload);
+    return getResponseData(response);
+  },
+
   async refreshSession(refreshToken) {
     const body = refreshToken ? { refreshToken } : {};
     const response = await apiClient.post("/auth/refresh", body);

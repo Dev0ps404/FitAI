@@ -8,6 +8,8 @@ const {
   refreshSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  updateProfileSchema,
+  changePasswordSchema,
   sessionIdParamSchema,
 } = require('../validators/auth.validator')
 const {
@@ -21,6 +23,8 @@ const {
   forgotPassword,
   resetPassword,
   getMe,
+  updateMe,
+  changePassword,
   handleGoogleOAuthSuccess,
 } = require('../controllers/auth/auth.controller')
 const { passport } = require('../config/passport')
@@ -67,6 +71,18 @@ authRouter.post(
   resetPassword,
 )
 authRouter.get('/me', requireAuth, getMe)
+authRouter.patch(
+  '/me',
+  requireAuth,
+  validateRequest({ body: updateProfileSchema }),
+  updateMe,
+)
+authRouter.patch(
+  '/change-password',
+  requireAuth,
+  validateRequest({ body: changePasswordSchema }),
+  changePassword,
+)
 
 if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
   authRouter.get(

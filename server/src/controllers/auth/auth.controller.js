@@ -20,6 +20,7 @@ const {
 } = require('../../services/token.service')
 const {
   getDevUserByEmail,
+  getDevUserById,
   createDevUser,
   verifyDevUserPassword,
   touchDevUserLogin,
@@ -485,6 +486,170 @@ const getMe = asyncHandler(async (req, res) => {
   })
 })
 
+const updateMe = asyncHandler(async (req, res) => {
+  const payload = req.validatedBody || req.body
+
+  if (env.SKIP_DB_CONNECTION) {
+    const user = getDevUserById(req.user._id)
+
+    if (!user) {
+      throw new ApiError(404, 'User not found')
+    }
+
+    if (payload.name !== undefined) {
+      user.name = payload.name
+    }
+
+    if (payload.avatarUrl !== undefined) {
+      user.avatarUrl = payload.avatarUrl
+    }
+
+    if (payload.gender !== undefined) {
+      user.gender = payload.gender
+    }
+
+    if (payload.fitnessLevel !== undefined) {
+      user.fitnessLevel = payload.fitnessLevel
+    }
+
+    if (payload.age !== undefined) {
+      user.age = payload.age
+    }
+
+    if (payload.heightCm !== undefined) {
+      user.heightCm = payload.heightCm
+    }
+
+    if (payload.currentWeightKg !== undefined) {
+      user.currentWeightKg = payload.currentWeightKg
+    }
+
+    if (payload.goalWeightKg !== undefined) {
+      user.goalWeightKg = payload.goalWeightKg
+    }
+
+    user.updatedAt = new Date()
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        user: sanitizeUser(user),
+      },
+    })
+
+    return
+  }
+
+  const user = await User.findById(req.user._id)
+
+  if (!user) {
+    throw new ApiError(404, 'User not found')
+  }
+
+  if (payload.name !== undefined) {
+    user.name = payload.name
+  }
+
+  if (payload.avatarUrl !== undefined) {
+    user.avatarUrl = payload.avatarUrl
+  }
+
+  if (payload.gender !== undefined) {
+    user.gender = payload.gender
+  }
+
+  if (payload.fitnessLevel !== undefined) {
+    user.fitnessLevel = payload.fitnessLevel
+  }
+
+  if (payload.age !== undefined) {
+    user.age = payload.age
+  }
+
+  if (payload.heightCm !== undefined) {
+    user.heightCm = payload.heightCm
+  }
+
+  if (payload.currentWeightKg !== undefined) {
+    user.currentWeightKg = payload.currentWeightKg
+  }
+
+  if (payload.goalWeightKg !== undefined) {
+    user.goalWeightKg = payload.goalWeightKg
+  }
+
+  await user.save()
+
+  res.status(200).json({
+    success: true,
+    message: 'Profile updated successfully',
+    data: {
+      user: sanitizeUser(user),
+    },
+  })
+})
+
+const changePassword = asyncHandler(async (req, res) => {
+  const payload = req.validatedBody || req.body
+
+  if (env.SKIP_DB_CONNECTION) {
+    const user = getDevUserById(req.user._id)
+
+    if (!user) {
+      throw new ApiError(404, 'User not found')
+    }
+
+    const isCurrentPasswordValid = await verifyDevUserPassword(
+      user,
+      payload.currentPassword,
+    )
+
+    if (!isCurrentPasswordValid) {
+      throw new ApiError(401, 'Current password is incorrect')
+    }
+
+    user.passwordHash = await User.hashPassword(payload.newPassword)
+    user.updatedAt = new Date()
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully',
+    })
+
+    return
+  }
+
+  const user = await User.findById(req.user._id).select('+passwordHash')
+
+  if (!user) {
+    throw new ApiError(404, 'User not found')
+  }
+
+  if (!user.passwordHash) {
+    throw new ApiError(
+      400,
+      'Password change is unavailable for this account. Use social login.',
+    )
+  }
+
+  const isCurrentPasswordValid = await user.verifyPassword(
+    payload.currentPassword,
+  )
+
+  if (!isCurrentPasswordValid) {
+    throw new ApiError(401, 'Current password is incorrect')
+  }
+
+  user.passwordHash = await User.hashPassword(payload.newPassword)
+  await user.save({ validateBeforeSave: false })
+
+  res.status(200).json({
+    success: true,
+    message: 'Password changed successfully',
+  })
+})
+
 const handleGoogleOAuthSuccess = asyncHandler(async (req, res) => {
   if (!req.user) {
     throw new ApiError(401, 'Google authentication failed')
@@ -522,5 +687,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   getMe,
+  updateMe,
+  changePassword,
   handleGoogleOAuthSuccess,
 }
