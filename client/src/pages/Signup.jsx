@@ -60,18 +60,16 @@ function Signup() {
   }
 
   return (
-    <section className="mx-auto w-full max-w-xl py-8 md:py-12">
-      <div className="panel-card">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-lime-300">
-          Join FitAI
-        </p>
-        <h1 className="text-3xl font-bold uppercase tracking-[0.07em] text-zinc-100 md:text-4xl">
+    <section className="mx-auto flex min-h-[72vh] w-full max-w-xl items-center py-8 md:py-12">
+      <div className="panel-card subtle-fade-in w-full">
+        <p className="neon-chip mb-4 inline-flex">Join FitAI</p>
+        <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.07em] text-white md:text-4xl">
           Create Account
         </h1>
 
         <form className="mt-7 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-zinc-400">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
               Full Name
             </label>
             <input
@@ -87,7 +85,7 @@ function Signup() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-zinc-400">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
               Email
             </label>
             <input
@@ -105,7 +103,7 @@ function Signup() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-zinc-400">
+              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
                 Password
               </label>
               <input
@@ -122,7 +120,7 @@ function Signup() {
             </div>
 
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-zinc-400">
+              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
                 Confirm Password
               </label>
               <input
@@ -154,9 +152,12 @@ function Signup() {
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-zinc-300">
+        <p className="mt-6 text-sm text-violet-100/80">
           Already have an account?{" "}
-          <Link to="/login" className="text-lime-300 hover:text-lime-200">
+          <Link
+            to="/login"
+            className="font-semibold text-violet-300 transition hover:text-violet-200"
+          >
             Login
           </Link>
         </p>

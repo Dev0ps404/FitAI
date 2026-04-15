@@ -4,36 +4,38 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#fcf9ff",
-        glass: "#ffffffe0",
+        ink: "#0f0f1a",
+        glass: "#ffffff0d",
+        primary: "#7c3aed",
+        secondary: "#a78bfa",
         sky: {
-          50: "#faf5ff",
-          100: "#f3e8ff",
-          200: "#e9d5ff",
-          300: "#d8b4fe",
-          400: "#c084fc",
+          50: "#f5f3ff",
+          100: "#ede9fe",
+          200: "#ddd6fe",
+          300: "#c4b5fd",
+          400: "#a78bfa",
         },
         neon: {
           cyan: "#7c3aed",
-          lime: "#9333ea",
-          amber: "#a855f7",
+          lime: "#a78bfa",
+          amber: "#8b5cf6",
         },
       },
       boxShadow: {
-        glass: "0 14px 42px rgba(124, 58, 237, 0.16)",
-        neon: "0 0 22px rgba(147, 51, 234, 0.35)",
+        glass: "0 18px 45px rgba(8, 4, 22, 0.45)",
+        neon: "0 0 22px rgba(124, 58, 237, 0.35)",
       },
       fontFamily: {
-        heading: ["Rajdhani", "sans-serif"],
-        body: ["Sora", "sans-serif"],
+        heading: ["Poppins", "sans-serif"],
+        body: ["Inter", "sans-serif"],
       },
       keyframes: {
         pulseNeon: {
           "0%, 100%": {
-            boxShadow: "0 0 0 rgba(147, 51, 234, 0)",
+            boxShadow: "0 0 0 rgba(124, 58, 237, 0)",
           },
           "50%": {
-            boxShadow: "0 0 18px rgba(147, 51, 234, 0.45)",
+            boxShadow: "0 0 18px rgba(124, 58, 237, 0.45)",
           },
         },
       },
