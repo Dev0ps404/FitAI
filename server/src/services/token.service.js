@@ -68,6 +68,7 @@ async function issueRefreshToken({
   ipAddress,
   userAgent,
   replacedByTokenHash,
+  sessionLabel,
 }) {
   const token = signRefreshToken(user)
   const tokenHash = createTokenHash(token)
@@ -81,6 +82,7 @@ async function issueRefreshToken({
     ipAddress: ipAddress || null,
     userAgent: userAgent || null,
     replacedByTokenHash: replacedByTokenHash || null,
+    sessionLabel: sessionLabel || 'web',
   })
 
   return {
@@ -93,6 +95,23 @@ async function issueRefreshToken({
 }
 
 async function getValidRefreshTokenRecord(rawRefreshToken) {
+  const tokenRecord = await getRefreshTokenRecord(rawRefreshToken)
+
+  if (!tokenRecord) {
+    return null
+  }
+
+  if (
+    tokenRecord.tokenDoc.isRevoked ||
+    tokenRecord.tokenDoc.expiresAt <= new Date()
+  ) {
+    return null
+  }
+
+  return tokenRecord
+}
+
+async function getRefreshTokenRecord(rawRefreshToken) {
   try {
     const decoded = verifyRefreshToken(rawRefreshToken)
     const tokenHash = createTokenHash(rawRefreshToken)
@@ -103,10 +122,6 @@ async function getValidRefreshTokenRecord(rawRefreshToken) {
     })
 
     if (!tokenDoc) {
-      return null
-    }
-
-    if (tokenDoc.isRevoked || tokenDoc.expiresAt <= new Date()) {
       return null
     }
 
@@ -132,7 +147,7 @@ async function revokeRefreshTokenByHash(tokenHash, reason = 'revoked') {
       revokeReason: reason,
     },
     {
-      new: true,
+      returnDocument: 'after',
     },
   )
 }
@@ -156,14 +171,53 @@ async function revokeAllUserRefreshTokens(userId, reason = 'logout_all') {
   )
 }
 
+async function listActiveSessionsForUser(userId) {
+  return RefreshToken.find({
+    user: userId,
+    isRevoked: false,
+    expiresAt: {
+      $gt: new Date(),
+    },
+  })
+    .sort({ createdAt: -1 })
+    .select(
+      '_id tokenHash createdAt expiresAt ipAddress userAgent sessionLabel',
+    )
+}
+
+async function revokeRefreshTokenByIdForUser(
+  tokenId,
+  userId,
+  reason = 'session_revoked',
+) {
+  return RefreshToken.findOneAndUpdate(
+    {
+      _id: tokenId,
+      user: userId,
+      isRevoked: false,
+    },
+    {
+      isRevoked: true,
+      revokedAt: new Date(),
+      revokeReason: reason,
+    },
+    {
+      returnDocument: 'after',
+    },
+  )
+}
+
 module.exports = {
   signAccessToken,
   verifyAccessToken,
   verifyRefreshToken,
   issueRefreshToken,
   getRefreshTokenTtlMs,
+  getRefreshTokenRecord,
   getValidRefreshTokenRecord,
   revokeRefreshToken,
   revokeRefreshTokenByHash,
   revokeAllUserRefreshTokens,
+  listActiveSessionsForUser,
+  revokeRefreshTokenByIdForUser,
 }

@@ -8,6 +8,7 @@ const {
   refreshSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  sessionIdParamSchema,
 } = require('../validators/auth.validator')
 const {
   signup,
@@ -15,6 +16,8 @@ const {
   refreshSession,
   logout,
   logoutAll,
+  listSessions,
+  revokeSession,
   forgotPassword,
   resetPassword,
   getMe,
@@ -44,6 +47,13 @@ authRouter.post(
 )
 authRouter.post('/logout', logout)
 authRouter.post('/logout-all', requireAuth, logoutAll)
+authRouter.get('/sessions', requireAuth, listSessions)
+authRouter.delete(
+  '/sessions/:sessionId',
+  requireAuth,
+  validateRequest({ params: sessionIdParamSchema }),
+  revokeSession,
+)
 authRouter.post(
   '/forgot-password',
   authRateLimiter,

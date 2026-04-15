@@ -36,6 +36,16 @@ const authApi = {
     return getResponseData(response);
   },
 
+  async getSessions() {
+    const response = await apiClient.get("/auth/sessions");
+    return getResponseData(response);
+  },
+
+  async revokeSession(sessionId) {
+    const response = await apiClient.delete(`/auth/sessions/${sessionId}`);
+    return getResponseData(response);
+  },
+
   async forgotPassword(payload) {
     const response = await apiClient.post("/auth/forgot-password", payload);
     return getResponseData(response);

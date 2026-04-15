@@ -1,4 +1,4 @@
-const { z } = require('./common.validator')
+const { z, objectIdSchema } = require('./common.validator')
 
 const passwordSchema = z
   .string()
@@ -42,10 +42,15 @@ const resetPasswordSchema = z.object({
   newPassword: passwordSchema,
 })
 
+const sessionIdParamSchema = z.object({
+  sessionId: objectIdSchema,
+})
+
 module.exports = {
   registerSchema,
   loginSchema,
   refreshSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  sessionIdParamSchema,
 }

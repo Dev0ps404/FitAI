@@ -3,18 +3,27 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../services/apiClient";
 import { workoutsApi } from "../services/fitnessApi";
 
-const initialFormState = {
-  name: "",
-  date: "",
-  status: "planned",
-  exerciseName: "",
-  sets: "3",
-  reps: "10",
-  weightKg: "0",
-  durationMin: "0",
-  caloriesBurned: "0",
-  notes: "",
-};
+function createExerciseDraft(overrides = {}) {
+  return {
+    name: "",
+    sets: "3",
+    reps: "10",
+    weightKg: "0",
+    durationMin: "0",
+    caloriesBurned: "0",
+    ...overrides,
+  };
+}
+
+function createInitialFormState() {
+  return {
+    name: "",
+    date: "",
+    status: "planned",
+    notes: "",
+    exercises: [createExerciseDraft()],
+  };
+}
 
 function toInputDate(dateValue) {
   if (!dateValue) {
@@ -36,12 +45,12 @@ function toInputDate(dateValue) {
 
 function Workout() {
   const queryClient = useQueryClient();
-  const [form, setForm] = useState(initialFormState);
+  const [form, setForm] = useState(createInitialFormState);
   const [editingWorkoutId, setEditingWorkoutId] = useState("");
   const [feedback, setFeedback] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["phase1-workouts"],
+    queryKey: ["phase2-workouts"],
     queryFn: () => workoutsApi.list({ limit: 30 }),
   });
 
@@ -51,8 +60,11 @@ function Workout() {
     mutationFn: (payload) => workoutsApi.create(payload),
     onSuccess: async () => {
       setFeedback("Workout added successfully.");
-      setForm(initialFormState);
-      await queryClient.invalidateQueries({ queryKey: ["phase1-workouts"] });
+      setForm(createInitialFormState());
+      await queryClient.invalidateQueries({ queryKey: ["phase2-workouts"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["phase2-workout-stats"],
+      });
     },
     onError: (error) => {
       setFeedback(getApiErrorMessage(error, "Unable to add workout."));
@@ -65,8 +77,11 @@ function Workout() {
     onSuccess: async () => {
       setFeedback("Workout updated successfully.");
       setEditingWorkoutId("");
-      setForm(initialFormState);
-      await queryClient.invalidateQueries({ queryKey: ["phase1-workouts"] });
+      setForm(createInitialFormState());
+      await queryClient.invalidateQueries({ queryKey: ["phase2-workouts"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["phase2-workout-stats"],
+      });
     },
     onError: (error) => {
       setFeedback(getApiErrorMessage(error, "Unable to update workout."));
@@ -77,14 +92,17 @@ function Workout() {
     mutationFn: (workoutId) => workoutsApi.remove(workoutId),
     onSuccess: async () => {
       setFeedback("Workout deleted successfully.");
-      await queryClient.invalidateQueries({ queryKey: ["phase1-workouts"] });
+      await queryClient.invalidateQueries({ queryKey: ["phase2-workouts"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["phase2-workout-stats"],
+      });
     },
     onError: (error) => {
       setFeedback(getApiErrorMessage(error, "Unable to delete workout."));
     },
   });
 
-  function handleFieldChange(event) {
+  function handleFormFieldChange(event) {
     const { name, value } = event.target;
     setForm((prev) => ({
       ...prev,
@@ -92,32 +110,63 @@ function Workout() {
     }));
   }
 
+  function handleExerciseFieldChange(index, field, value) {
+    setForm((prev) => ({
+      ...prev,
+      exercises: prev.exercises.map((exercise, itemIndex) =>
+        itemIndex === index ? { ...exercise, [field]: value } : exercise,
+      ),
+    }));
+  }
+
+  function addExerciseRow() {
+    setForm((prev) => ({
+      ...prev,
+      exercises: [...prev.exercises, createExerciseDraft()],
+    }));
+  }
+
+  function removeExerciseRow(index) {
+    setForm((prev) => {
+      if (prev.exercises.length === 1) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        exercises: prev.exercises.filter((_, itemIndex) => itemIndex !== index),
+      };
+    });
+  }
+
   function resetForm() {
     setEditingWorkoutId("");
-    setForm(initialFormState);
+    setForm(createInitialFormState());
     setFeedback("");
   }
 
   function getPayloadFromForm() {
+    const exercises = form.exercises
+      .filter((exercise) => exercise.name.trim().length > 0)
+      .map((exercise) => ({
+        name: exercise.name.trim(),
+        sets: Number(exercise.sets || 0),
+        reps: Number(exercise.reps || 0),
+        weightKg: Number(exercise.weightKg || 0),
+        durationMin: Number(exercise.durationMin || 0),
+        caloriesBurned: Number(exercise.caloriesBurned || 0),
+      }));
+
     return {
       name: form.name.trim(),
       date: form.date || undefined,
       status: form.status,
       notes: form.notes.trim() || undefined,
-      exercises: [
-        {
-          name: form.exerciseName.trim(),
-          sets: Number(form.sets || 0),
-          reps: Number(form.reps || 0),
-          weightKg: Number(form.weightKg || 0),
-          durationMin: Number(form.durationMin || 0),
-          caloriesBurned: Number(form.caloriesBurned || 0),
-        },
-      ],
+      exercises,
     };
   }
 
-  async function handleSubmit(event) {
+  function handleSubmit(event) {
     event.preventDefault();
     setFeedback("");
 
@@ -126,12 +175,21 @@ function Workout() {
       return;
     }
 
-    if (!form.exerciseName.trim()) {
-      setFeedback("Exercise name is required.");
+    const payload = getPayloadFromForm();
+
+    if (payload.exercises.length === 0) {
+      setFeedback("At least one exercise is required.");
       return;
     }
 
-    const payload = getPayloadFromForm();
+    const hasInvalidExerciseName = payload.exercises.some(
+      (exercise) => exercise.name.trim().length < 2,
+    );
+
+    if (hasInvalidExerciseName) {
+      setFeedback("Each exercise name must be at least 2 characters.");
+      return;
+    }
 
     if (editingWorkoutId) {
       updateMutation.mutate({ workoutId: editingWorkoutId, payload });
@@ -142,7 +200,19 @@ function Workout() {
   }
 
   function startEdit(workout) {
-    const firstExercise = workout.exercises?.[0] || {};
+    const nextExercises =
+      workout.exercises?.length > 0
+        ? workout.exercises.map((exercise) =>
+            createExerciseDraft({
+              name: exercise.name || "",
+              sets: String(exercise.sets ?? 0),
+              reps: String(exercise.reps ?? 0),
+              weightKg: String(exercise.weightKg ?? 0),
+              durationMin: String(exercise.durationMin ?? 0),
+              caloriesBurned: String(exercise.caloriesBurned ?? 0),
+            }),
+          )
+        : [createExerciseDraft()];
 
     setEditingWorkoutId(workout._id);
     setFeedback("");
@@ -150,13 +220,8 @@ function Workout() {
       name: workout.name || "",
       date: toInputDate(workout.date),
       status: workout.status || "planned",
-      exerciseName: firstExercise.name || "",
-      sets: String(firstExercise.sets ?? 0),
-      reps: String(firstExercise.reps ?? 0),
-      weightKg: String(firstExercise.weightKg ?? 0),
-      durationMin: String(firstExercise.durationMin ?? 0),
-      caloriesBurned: String(firstExercise.caloriesBurned ?? 0),
       notes: workout.notes || "",
+      exercises: nextExercises,
     });
   }
 
@@ -177,11 +242,12 @@ function Workout() {
           Workout Tracker
         </h1>
         <p className="mt-3 text-sm text-zinc-300 md:text-base">
-          Add, edit, and delete workouts while tracking sets, reps, and weights.
+          Add, edit, and delete workouts with multiple exercise rows per
+          session.
         </p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <form className="panel-card space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
@@ -191,7 +257,7 @@ function Workout() {
               <input
                 name="name"
                 value={form.name}
-                onChange={handleFieldChange}
+                onChange={handleFormFieldChange}
                 className="input-control"
                 placeholder="Push Day"
               />
@@ -205,7 +271,7 @@ function Workout() {
                 name="date"
                 type="date"
                 value={form.date}
-                onChange={handleFieldChange}
+                onChange={handleFormFieldChange}
                 className="input-control"
               />
             </div>
@@ -218,7 +284,7 @@ function Workout() {
             <select
               name="status"
               value={form.status}
-              onChange={handleFieldChange}
+              onChange={handleFormFieldChange}
               className="input-control"
             >
               <option value="planned">Planned</option>
@@ -227,66 +293,126 @@ function Workout() {
             </select>
           </div>
 
-          <div className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lime-300">
-              Exercise
-            </p>
-
-            <div className="mt-3 grid gap-4 md:grid-cols-2">
-              <input
-                name="exerciseName"
-                value={form.exerciseName}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Bench Press"
-              />
-              <input
-                name="sets"
-                type="number"
-                min="0"
-                value={form.sets}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Sets"
-              />
-              <input
-                name="reps"
-                type="number"
-                min="0"
-                value={form.reps}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Reps"
-              />
-              <input
-                name="weightKg"
-                type="number"
-                min="0"
-                step="0.1"
-                value={form.weightKg}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Weight (kg)"
-              />
-              <input
-                name="durationMin"
-                type="number"
-                min="0"
-                value={form.durationMin}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Duration (min)"
-              />
-              <input
-                name="caloriesBurned"
-                type="number"
-                min="0"
-                value={form.caloriesBurned}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Calories burned"
-              />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lime-300">
+                Exercises
+              </p>
+              <button
+                type="button"
+                onClick={addExerciseRow}
+                className="secondary-btn"
+              >
+                Add Exercise
+              </button>
             </div>
+
+            {form.exercises.map((exercise, index) => (
+              <div
+                key={`${index}-${exercise.name}`}
+                className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4"
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+                    Exercise {index + 1}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => removeExerciseRow(index)}
+                    className="rounded-full border border-rose-400/40 px-3 py-1 text-xs uppercase tracking-[0.14em] text-rose-300 transition hover:bg-rose-400/10"
+                    disabled={form.exercises.length === 1}
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input
+                    value={exercise.name}
+                    onChange={(event) =>
+                      handleExerciseFieldChange(
+                        index,
+                        "name",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Bench Press"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={exercise.sets}
+                    onChange={(event) =>
+                      handleExerciseFieldChange(
+                        index,
+                        "sets",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Sets"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={exercise.reps}
+                    onChange={(event) =>
+                      handleExerciseFieldChange(
+                        index,
+                        "reps",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Reps"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={exercise.weightKg}
+                    onChange={(event) =>
+                      handleExerciseFieldChange(
+                        index,
+                        "weightKg",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Weight (kg)"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={exercise.durationMin}
+                    onChange={(event) =>
+                      handleExerciseFieldChange(
+                        index,
+                        "durationMin",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Duration (min)"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={exercise.caloriesBurned}
+                    onChange={(event) =>
+                      handleExerciseFieldChange(
+                        index,
+                        "caloriesBurned",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Calories burned"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
 
           <div>
@@ -297,7 +423,7 @@ function Workout() {
               name="notes"
               rows={3}
               value={form.notes}
-              onChange={handleFieldChange}
+              onChange={handleFormFieldChange}
               className="input-control"
               placeholder="Session felt strong today"
             />
@@ -346,51 +472,57 @@ function Workout() {
           ) : null}
 
           <div className="mt-4 space-y-3">
-            {workouts.map((workout) => {
-              const firstExercise = workout.exercises?.[0] || {};
-
-              return (
-                <article
-                  key={workout._id}
-                  className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-sm font-semibold uppercase tracking-[0.06em] text-lime-200">
-                        {workout.name}
-                      </h3>
-                      <p className="mt-1 text-xs text-zinc-400">
-                        {new Date(workout.date).toLocaleDateString()} •{" "}
-                        {workout.status}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => startEdit(workout)}
-                        className="rounded-lg border border-zinc-600 px-2 py-1 text-xs text-zinc-200 transition hover:border-lime-400/50"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => removeWorkout(workout._id)}
-                        className="rounded-lg border border-rose-400/40 px-2 py-1 text-xs text-rose-300 transition hover:bg-rose-400/10"
-                        disabled={deleteMutation.isPending}
-                      >
-                        Delete
-                      </button>
-                    </div>
+            {workouts.map((workout) => (
+              <article
+                key={workout._id}
+                className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-[0.06em] text-lime-200">
+                      {workout.name}
+                    </h3>
+                    <p className="mt-1 text-xs text-zinc-400">
+                      {new Date(workout.date).toLocaleDateString()} •{" "}
+                      {workout.status}
+                    </p>
                   </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => startEdit(workout)}
+                      className="rounded-lg border border-zinc-600 px-2 py-1 text-xs text-zinc-200 transition hover:border-lime-400/50"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeWorkout(workout._id)}
+                      className="rounded-lg border border-rose-400/40 px-2 py-1 text-xs text-rose-300 transition hover:bg-rose-400/10"
+                      disabled={deleteMutation.isPending}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
 
-                  <p className="mt-3 text-sm text-zinc-300">
-                    {firstExercise.name || "Exercise"}:{" "}
-                    {firstExercise.sets || 0} sets × {firstExercise.reps || 0}{" "}
-                    reps • {firstExercise.weightKg || 0} kg
-                  </p>
-                </article>
-              );
-            })}
+                <ul className="mt-3 space-y-1 text-sm text-zinc-300">
+                  {(workout.exercises || [])
+                    .slice(0, 3)
+                    .map((exercise, index) => (
+                      <li key={`${workout._id}-${exercise.name}-${index}`}>
+                        {exercise.name}: {exercise.sets || 0} x{" "}
+                        {exercise.reps || 0} • {exercise.weightKg || 0} kg
+                      </li>
+                    ))}
+                  {(workout.exercises || []).length > 3 ? (
+                    <li className="text-xs text-zinc-400">
+                      + {(workout.exercises || []).length - 3} more exercises
+                    </li>
+                  ) : null}
+                </ul>
+              </article>
+            ))}
           </div>
         </div>
       </div>

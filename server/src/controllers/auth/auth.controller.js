@@ -10,10 +10,13 @@ const {
 const {
   signAccessToken,
   issueRefreshToken,
+  getRefreshTokenRecord,
   getValidRefreshTokenRecord,
   revokeRefreshToken,
   revokeRefreshTokenByHash,
   revokeAllUserRefreshTokens,
+  listActiveSessionsForUser,
+  revokeRefreshTokenByIdForUser,
 } = require('../../services/token.service')
 const {
   getDevUserByEmail,
@@ -41,6 +44,22 @@ function getRefreshTokenFromRequest(req) {
   )
 }
 
+function resolveSessionLabel(req) {
+  const explicitLabel = req.headers['x-session-label']
+
+  if (typeof explicitLabel === 'string' && explicitLabel.trim()) {
+    return explicitLabel.trim().slice(0, 60)
+  }
+
+  const userAgent = req.headers['user-agent']
+
+  if (typeof userAgent === 'string' && userAgent.trim()) {
+    return userAgent.trim().slice(0, 60)
+  }
+
+  return 'web'
+}
+
 async function sendAuthResponse({ req, res, user, statusCode, message }) {
   const accessToken = signAccessToken(user)
 
@@ -61,6 +80,7 @@ async function sendAuthResponse({ req, res, user, statusCode, message }) {
     user,
     ipAddress: req.ip,
     userAgent: req.headers['user-agent'],
+    sessionLabel: resolveSessionLabel(req),
   })
 
   setRefreshTokenCookie(
@@ -219,6 +239,30 @@ const refreshSession = asyncHandler(async (req, res) => {
     throw new ApiError(401, 'Refresh token is missing')
   }
 
+  const refreshTokenRecord = await getRefreshTokenRecord(refreshToken)
+
+  if (!refreshTokenRecord) {
+    clearRefreshTokenCookie(res)
+    throw new ApiError(401, 'Refresh token is invalid or expired')
+  }
+
+  if (refreshTokenRecord.tokenDoc.isRevoked) {
+    if (refreshTokenRecord.tokenDoc.replacedByTokenHash) {
+      await revokeAllUserRefreshTokens(
+        refreshTokenRecord.decoded.sub,
+        'refresh_token_reuse_detected',
+      )
+    }
+
+    clearRefreshTokenCookie(res)
+    throw new ApiError(401, 'Refresh token has been revoked')
+  }
+
+  if (refreshTokenRecord.tokenDoc.expiresAt <= new Date()) {
+    clearRefreshTokenCookie(res)
+    throw new ApiError(401, 'Refresh token is invalid or expired')
+  }
+
   const validTokenRecord = await getValidRefreshTokenRecord(refreshToken)
 
   if (!validTokenRecord) {
@@ -242,6 +286,7 @@ const refreshSession = asyncHandler(async (req, res) => {
     ipAddress: req.ip,
     userAgent: req.headers['user-agent'],
     replacedByTokenHash: validTokenRecord.tokenHash,
+    sessionLabel: resolveSessionLabel(req),
   })
 
   await revokeRefreshTokenByHash(validTokenRecord.tokenHash, 'rotated')
@@ -305,6 +350,72 @@ const logoutAll = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: 'All sessions were logged out',
+  })
+})
+
+const listSessions = asyncHandler(async (req, res) => {
+  if (env.SKIP_DB_CONNECTION) {
+    res.status(200).json({
+      success: true,
+      data: {
+        sessions: [],
+      },
+    })
+
+    return
+  }
+
+  const refreshToken = getRefreshTokenFromRequest(req)
+  const currentTokenHash = refreshToken ? createTokenHash(refreshToken) : null
+
+  const activeSessions = await listActiveSessionsForUser(req.user._id)
+  const sessions = activeSessions.map((sessionDoc) => ({
+    id: sessionDoc._id,
+    createdAt: sessionDoc.createdAt,
+    expiresAt: sessionDoc.expiresAt,
+    ipAddress: sessionDoc.ipAddress,
+    userAgent: sessionDoc.userAgent,
+    sessionLabel: sessionDoc.sessionLabel || 'web',
+    isCurrent:
+      Boolean(currentTokenHash) && currentTokenHash === sessionDoc.tokenHash,
+  }))
+
+  res.status(200).json({
+    success: true,
+    data: {
+      sessions,
+    },
+  })
+})
+
+const revokeSession = asyncHandler(async (req, res) => {
+  if (env.SKIP_DB_CONNECTION) {
+    throw new ApiError(400, 'Session revoke unavailable in SKIP_DB mode')
+  }
+
+  const { sessionId } = req.validatedParams || req.params
+  const revokedSession = await revokeRefreshTokenByIdForUser(
+    sessionId,
+    req.user._id,
+    'session_revoked',
+  )
+
+  if (!revokedSession) {
+    throw new ApiError(404, 'Session not found or already revoked')
+  }
+
+  const refreshToken = getRefreshTokenFromRequest(req)
+
+  if (
+    refreshToken &&
+    createTokenHash(refreshToken) === revokedSession.tokenHash
+  ) {
+    clearRefreshTokenCookie(res)
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Session revoked successfully',
   })
 })
 
@@ -384,6 +495,7 @@ const handleGoogleOAuthSuccess = asyncHandler(async (req, res) => {
     user: req.user,
     ipAddress: req.ip,
     userAgent: req.headers['user-agent'],
+    sessionLabel: resolveSessionLabel(req),
   })
 
   setRefreshTokenCookie(
@@ -405,6 +517,8 @@ module.exports = {
   refreshSession,
   logout,
   logoutAll,
+  listSessions,
+  revokeSession,
   forgotPassword,
   resetPassword,
   getMe,

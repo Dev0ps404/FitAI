@@ -3,18 +3,27 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { dietApi } from "../services/fitnessApi";
 import { getApiErrorMessage } from "../services/apiClient";
 
-const initialFormState = {
-  date: "",
-  mealType: "breakfast",
-  foodName: "",
-  quantity: "1",
-  unit: "serving",
-  calories: "0",
-  proteinG: "0",
-  carbsG: "0",
-  fatsG: "0",
-  notes: "",
-};
+function createFoodDraft(overrides = {}) {
+  return {
+    name: "",
+    quantity: "1",
+    unit: "serving",
+    calories: "0",
+    proteinG: "0",
+    carbsG: "0",
+    fatsG: "0",
+    ...overrides,
+  };
+}
+
+function createInitialFormState() {
+  return {
+    date: "",
+    mealType: "breakfast",
+    notes: "",
+    foods: [createFoodDraft()],
+  };
+}
 
 function toInputDate(dateValue) {
   if (!dateValue) {
@@ -36,12 +45,12 @@ function toInputDate(dateValue) {
 
 function Diet() {
   const queryClient = useQueryClient();
-  const [form, setForm] = useState(initialFormState);
+  const [form, setForm] = useState(createInitialFormState);
   const [editingDietId, setEditingDietId] = useState("");
   const [feedback, setFeedback] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["phase1-diet-logs"],
+    queryKey: ["phase2-diet-logs"],
     queryFn: () => dietApi.list({ limit: 30 }),
   });
 
@@ -51,8 +60,8 @@ function Diet() {
     mutationFn: (payload) => dietApi.create(payload),
     onSuccess: async () => {
       setFeedback("Diet log added successfully.");
-      setForm(initialFormState);
-      await queryClient.invalidateQueries({ queryKey: ["phase1-diet-logs"] });
+      setForm(createInitialFormState());
+      await queryClient.invalidateQueries({ queryKey: ["phase2-diet-logs"] });
       await queryClient.invalidateQueries({
         queryKey: ["phase1-diet-summary"],
       });
@@ -67,8 +76,8 @@ function Diet() {
     onSuccess: async () => {
       setFeedback("Diet log updated successfully.");
       setEditingDietId("");
-      setForm(initialFormState);
-      await queryClient.invalidateQueries({ queryKey: ["phase1-diet-logs"] });
+      setForm(createInitialFormState());
+      await queryClient.invalidateQueries({ queryKey: ["phase2-diet-logs"] });
       await queryClient.invalidateQueries({
         queryKey: ["phase1-diet-summary"],
       });
@@ -82,7 +91,7 @@ function Diet() {
     mutationFn: (dietLogId) => dietApi.remove(dietLogId),
     onSuccess: async () => {
       setFeedback("Diet log deleted successfully.");
-      await queryClient.invalidateQueries({ queryKey: ["phase1-diet-logs"] });
+      await queryClient.invalidateQueries({ queryKey: ["phase2-diet-logs"] });
       await queryClient.invalidateQueries({
         queryKey: ["phase1-diet-summary"],
       });
@@ -92,7 +101,7 @@ function Diet() {
     },
   });
 
-  function handleFieldChange(event) {
+  function handleFormFieldChange(event) {
     const { name, value } = event.target;
     setForm((prev) => ({
       ...prev,
@@ -100,47 +109,113 @@ function Diet() {
     }));
   }
 
+  function handleFoodFieldChange(index, field, value) {
+    setForm((prev) => ({
+      ...prev,
+      foods: prev.foods.map((food, itemIndex) =>
+        itemIndex === index ? { ...food, [field]: value } : food,
+      ),
+    }));
+  }
+
+  function addFoodRow() {
+    setForm((prev) => ({
+      ...prev,
+      foods: [...prev.foods, createFoodDraft()],
+    }));
+  }
+
+  function removeFoodRow(index) {
+    setForm((prev) => {
+      if (prev.foods.length === 1) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        foods: prev.foods.filter((_, itemIndex) => itemIndex !== index),
+      };
+    });
+  }
+
   function resetForm() {
     setEditingDietId("");
-    setForm(initialFormState);
+    setForm(createInitialFormState());
     setFeedback("");
   }
 
   function getPayloadFromForm() {
+    const foods = form.foods
+      .filter((food) => food.name.trim().length > 0)
+      .map((food) => ({
+        name: food.name.trim(),
+        quantity: Number(food.quantity || 0),
+        unit: food.unit.trim() || "serving",
+        calories: Number(food.calories || 0),
+        proteinG: Number(food.proteinG || 0),
+        carbsG: Number(food.carbsG || 0),
+        fatsG: Number(food.fatsG || 0),
+      }));
+
     return {
       date: form.date || undefined,
       mealType: form.mealType,
       notes: form.notes.trim() || undefined,
-      foods: [
-        {
-          name: form.foodName.trim(),
-          quantity: Number(form.quantity || 0),
-          unit: form.unit.trim() || "serving",
-          calories: Number(form.calories || 0),
-          proteinG: Number(form.proteinG || 0),
-          carbsG: Number(form.carbsG || 0),
-          fatsG: Number(form.fatsG || 0),
-        },
-      ],
+      foods,
     };
   }
 
+  function handleSubmit(event) {
+    event.preventDefault();
+    setFeedback("");
+
+    const payload = getPayloadFromForm();
+
+    if (payload.foods.length === 0) {
+      setFeedback("At least one food entry is required.");
+      return;
+    }
+
+    const hasInvalidFoodName = payload.foods.some(
+      (food) => food.name.length < 1,
+    );
+
+    if (hasInvalidFoodName) {
+      setFeedback("Food name cannot be empty.");
+      return;
+    }
+
+    if (editingDietId) {
+      updateMutation.mutate({ dietLogId: editingDietId, payload });
+      return;
+    }
+
+    createMutation.mutate(payload);
+  }
+
   function startEdit(dietLog) {
-    const firstFood = dietLog.foods?.[0] || {};
+    const nextFoods =
+      dietLog.foods?.length > 0
+        ? dietLog.foods.map((food) =>
+            createFoodDraft({
+              name: food.name || "",
+              quantity: String(food.quantity ?? 1),
+              unit: food.unit || "serving",
+              calories: String(food.calories ?? 0),
+              proteinG: String(food.proteinG ?? 0),
+              carbsG: String(food.carbsG ?? 0),
+              fatsG: String(food.fatsG ?? 0),
+            }),
+          )
+        : [createFoodDraft()];
 
     setEditingDietId(dietLog._id);
     setFeedback("");
     setForm({
       date: toInputDate(dietLog.date),
       mealType: dietLog.mealType || "breakfast",
-      foodName: firstFood.name || "",
-      quantity: String(firstFood.quantity ?? 1),
-      unit: firstFood.unit || "serving",
-      calories: String(firstFood.calories ?? 0),
-      proteinG: String(firstFood.proteinG ?? 0),
-      carbsG: String(firstFood.carbsG ?? 0),
-      fatsG: String(firstFood.fatsG ?? 0),
       notes: dietLog.notes || "",
+      foods: nextFoods,
     });
   }
 
@@ -154,25 +229,6 @@ function Diet() {
     deleteMutation.mutate(dietLogId);
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    setFeedback("");
-
-    if (!form.foodName.trim()) {
-      setFeedback("Food name is required.");
-      return;
-    }
-
-    const payload = getPayloadFromForm();
-
-    if (editingDietId) {
-      updateMutation.mutate({ dietLogId: editingDietId, payload });
-      return;
-    }
-
-    createMutation.mutate(payload);
-  }
-
   return (
     <section className="space-y-6 py-8 md:py-12">
       <div className="panel-card">
@@ -180,11 +236,12 @@ function Diet() {
           Diet Tracker
         </h1>
         <p className="mt-3 text-sm text-zinc-300 md:text-base">
-          Add meals, track calories, and maintain your nutrition history.
+          Track meals with multiple food rows and maintain complete nutrition
+          logs.
         </p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <form className="panel-card space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
@@ -195,7 +252,7 @@ function Diet() {
                 name="date"
                 type="date"
                 value={form.date}
-                onChange={handleFieldChange}
+                onChange={handleFormFieldChange}
                 className="input-control"
               />
             </div>
@@ -207,7 +264,7 @@ function Diet() {
               <select
                 name="mealType"
                 value={form.mealType}
-                onChange={handleFieldChange}
+                onChange={handleFormFieldChange}
                 className="input-control"
               >
                 <option value="breakfast">Breakfast</option>
@@ -218,76 +275,125 @@ function Diet() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lime-300">
-              Meal Entry
-            </p>
-
-            <div className="mt-3 grid gap-4 md:grid-cols-2">
-              <input
-                name="foodName"
-                value={form.foodName}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Oats"
-              />
-              <input
-                name="quantity"
-                type="number"
-                min="0"
-                step="0.1"
-                value={form.quantity}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Quantity"
-              />
-              <input
-                name="unit"
-                value={form.unit}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Unit"
-              />
-              <input
-                name="calories"
-                type="number"
-                min="0"
-                value={form.calories}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Calories"
-              />
-              <input
-                name="proteinG"
-                type="number"
-                min="0"
-                step="0.1"
-                value={form.proteinG}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Protein (g)"
-              />
-              <input
-                name="carbsG"
-                type="number"
-                min="0"
-                step="0.1"
-                value={form.carbsG}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Carbs (g)"
-              />
-              <input
-                name="fatsG"
-                type="number"
-                min="0"
-                step="0.1"
-                value={form.fatsG}
-                onChange={handleFieldChange}
-                className="input-control"
-                placeholder="Fats (g)"
-              />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lime-300">
+                Food Entries
+              </p>
+              <button
+                type="button"
+                onClick={addFoodRow}
+                className="secondary-btn"
+              >
+                Add Food
+              </button>
             </div>
+
+            {form.foods.map((food, index) => (
+              <div
+                key={`${index}-${food.name}`}
+                className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4"
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+                    Food {index + 1}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => removeFoodRow(index)}
+                    className="rounded-full border border-rose-400/40 px-3 py-1 text-xs uppercase tracking-[0.14em] text-rose-300 transition hover:bg-rose-400/10"
+                    disabled={form.foods.length === 1}
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input
+                    value={food.name}
+                    onChange={(event) =>
+                      handleFoodFieldChange(index, "name", event.target.value)
+                    }
+                    className="input-control"
+                    placeholder="Oats"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={food.quantity}
+                    onChange={(event) =>
+                      handleFoodFieldChange(
+                        index,
+                        "quantity",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Quantity"
+                  />
+                  <input
+                    value={food.unit}
+                    onChange={(event) =>
+                      handleFoodFieldChange(index, "unit", event.target.value)
+                    }
+                    className="input-control"
+                    placeholder="Unit"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    value={food.calories}
+                    onChange={(event) =>
+                      handleFoodFieldChange(
+                        index,
+                        "calories",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Calories"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={food.proteinG}
+                    onChange={(event) =>
+                      handleFoodFieldChange(
+                        index,
+                        "proteinG",
+                        event.target.value,
+                      )
+                    }
+                    className="input-control"
+                    placeholder="Protein (g)"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={food.carbsG}
+                    onChange={(event) =>
+                      handleFoodFieldChange(index, "carbsG", event.target.value)
+                    }
+                    className="input-control"
+                    placeholder="Carbs (g)"
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={food.fatsG}
+                    onChange={(event) =>
+                      handleFoodFieldChange(index, "fatsG", event.target.value)
+                    }
+                    className="input-control"
+                    placeholder="Fats (g)"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
 
           <div>
@@ -298,7 +404,7 @@ function Diet() {
               name="notes"
               rows={3}
               value={form.notes}
-              onChange={handleFieldChange}
+              onChange={handleFormFieldChange}
               className="input-control"
               placeholder="Balanced and high-protein meal"
             />
@@ -345,48 +451,54 @@ function Diet() {
           ) : null}
 
           <div className="mt-4 space-y-3">
-            {dietLogs.map((dietLog) => {
-              const firstFood = dietLog.foods?.[0] || {};
-
-              return (
-                <article
-                  key={dietLog._id}
-                  className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-sm font-semibold uppercase tracking-[0.06em] text-lime-200">
-                        {dietLog.mealType}
-                      </h3>
-                      <p className="mt-1 text-xs text-zinc-400">
-                        {new Date(dietLog.date).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => startEdit(dietLog)}
-                        className="rounded-lg border border-zinc-600 px-2 py-1 text-xs text-zinc-200 transition hover:border-lime-400/50"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => removeDietLog(dietLog._id)}
-                        className="rounded-lg border border-rose-400/40 px-2 py-1 text-xs text-rose-300 transition hover:bg-rose-400/10"
-                        disabled={deleteMutation.isPending}
-                      >
-                        Delete
-                      </button>
-                    </div>
+            {dietLogs.map((dietLog) => (
+              <article
+                key={dietLog._id}
+                className="rounded-2xl border border-zinc-700/80 bg-zinc-900/70 p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-[0.06em] text-lime-200">
+                      {dietLog.mealType}
+                    </h3>
+                    <p className="mt-1 text-xs text-zinc-400">
+                      {new Date(dietLog.date).toLocaleDateString()}
+                    </p>
                   </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => startEdit(dietLog)}
+                      className="rounded-lg border border-zinc-600 px-2 py-1 text-xs text-zinc-200 transition hover:border-lime-400/50"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeDietLog(dietLog._id)}
+                      className="rounded-lg border border-rose-400/40 px-2 py-1 text-xs text-rose-300 transition hover:bg-rose-400/10"
+                      disabled={deleteMutation.isPending}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
 
-                  <p className="mt-3 text-sm text-zinc-300">
-                    {firstFood.name || "Food"} • {firstFood.calories || 0} kcal
-                  </p>
-                </article>
-              );
-            })}
+                <ul className="mt-3 space-y-1 text-sm text-zinc-300">
+                  {(dietLog.foods || []).slice(0, 3).map((food, index) => (
+                    <li key={`${dietLog._id}-${food.name}-${index}`}>
+                      {food.name}: {food.calories || 0} kcal •{" "}
+                      {food.quantity || 0} {food.unit || "serving"}
+                    </li>
+                  ))}
+                  {(dietLog.foods || []).length > 3 ? (
+                    <li className="text-xs text-zinc-400">
+                      + {(dietLog.foods || []).length - 3} more foods
+                    </li>
+                  ) : null}
+                </ul>
+              </article>
+            ))}
           </div>
         </div>
       </div>
