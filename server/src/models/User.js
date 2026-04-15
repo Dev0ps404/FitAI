@@ -136,7 +136,7 @@ const userSchema = new mongoose.Schema(
   },
 )
 
-userSchema.pre('validate', function applyTrainerApprovalDefault(next) {
+userSchema.pre('validate', function applyTrainerApprovalDefault() {
   if (this.role === USER_ROLES.TRAINER) {
     this.trainerApprovalStatus =
       this.trainerApprovalStatus || TRAINER_APPROVAL_STATUS.PENDING
@@ -145,8 +145,6 @@ userSchema.pre('validate', function applyTrainerApprovalDefault(next) {
   if (this.role !== USER_ROLES.TRAINER) {
     this.trainerApprovalStatus = TRAINER_APPROVAL_STATUS.APPROVED
   }
-
-  next()
 })
 
 userSchema.methods.verifyPassword = async function verifyPassword(
