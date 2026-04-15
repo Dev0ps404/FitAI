@@ -277,7 +277,9 @@ function DashboardPage() {
 
   const errorMessage = [workoutsQuery, nutritionQuery, progressQuery]
     .filter((query) => query.isError)
-    .map((query) => getApiErrorMessage(query.error, "Dashboard data unavailable."))
+    .map((query) =>
+      getApiErrorMessage(query.error, "Dashboard data unavailable."),
+    )
     .join(" ");
 
   async function handleLogout() {
@@ -343,7 +345,9 @@ function DashboardPage() {
           </button>
         </div>
 
-        {workoutsQuery.isPending || nutritionQuery.isPending || progressQuery.isPending ? (
+        {workoutsQuery.isPending ||
+        nutritionQuery.isPending ||
+        progressQuery.isPending ? (
           <div className="rounded-2xl border border-[#aeb2b7]/25 bg-white px-4 py-3 text-sm text-[#5b5f64] shadow-[0px_20px_40px_rgba(47,51,55,0.06)]">
             Refreshing live metrics...
           </div>
@@ -368,7 +372,9 @@ function DashboardPage() {
                   <span className="mb-1 block text-xs font-semibold uppercase tracking-widest text-[#5a5e72]">
                     {stat.label}
                   </span>
-                  <p className="text-2xl font-bold text-[#2f3337]">{stat.value}</p>
+                  <p className="text-2xl font-bold text-[#2f3337]">
+                    {stat.value}
+                  </p>
                   <p className="mt-1 text-xs text-[#5b5f64]">{stat.subtext}</p>
                 </div>
                 <div
@@ -395,7 +401,8 @@ function DashboardPage() {
                     30-Day Workout Overview
                   </h2>
                   <p className="mt-1 text-sm text-[#5b5f64]">
-                    {completedCount} completed sessions across {totalCount} planned workouts.
+                    {completedCount} completed sessions across {totalCount}{" "}
+                    planned workouts.
                   </p>
                 </div>
                 <div className="text-right">
@@ -450,7 +457,9 @@ function DashboardPage() {
           </article>
 
           <article className="flex flex-col rounded-2xl bg-white p-8 shadow-[0px_20px_40px_rgba(47,51,55,0.06)] lg:col-span-4">
-            <h3 className="font-heading text-xl font-bold text-[#2f3337]">Nutrition</h3>
+            <h3 className="font-heading text-xl font-bold text-[#2f3337]">
+              Nutrition
+            </h3>
             <div className="mt-6 flex flex-1 flex-col gap-6">
               <div className="flex items-end justify-between">
                 <div>
@@ -476,7 +485,8 @@ function DashboardPage() {
                   <div className="mb-1 flex justify-between text-[10px] font-bold uppercase text-[#4e5266]">
                     <span>Protein</span>
                     <span>
-                      {formatNumber(nutritionSummary.totalProteinG)}g / {formatNumber(macroTargets.protein)}g
+                      {formatNumber(nutritionSummary.totalProteinG)}g /{" "}
+                      {formatNumber(macroTargets.protein)}g
                     </span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#eceef2]">
@@ -500,7 +510,8 @@ function DashboardPage() {
                   <div className="mb-1 flex justify-between text-[10px] font-bold uppercase text-[#4e5266]">
                     <span>Carbs</span>
                     <span>
-                      {formatNumber(nutritionSummary.totalCarbsG)}g / {formatNumber(macroTargets.carbs)}g
+                      {formatNumber(nutritionSummary.totalCarbsG)}g /{" "}
+                      {formatNumber(macroTargets.carbs)}g
                     </span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#eceef2]">
@@ -524,7 +535,8 @@ function DashboardPage() {
                   <div className="mb-1 flex justify-between text-[10px] font-bold uppercase text-[#4e5266]">
                     <span>Fats</span>
                     <span>
-                      {formatNumber(nutritionSummary.totalFatsG)}g / {formatNumber(macroTargets.fats)}g
+                      {formatNumber(nutritionSummary.totalFatsG)}g /{" "}
+                      {formatNumber(macroTargets.fats)}g
                     </span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#eceef2]">
@@ -549,7 +561,9 @@ function DashboardPage() {
 
           <article className="flex flex-col justify-between rounded-2xl bg-[#f2f3f7] p-8 lg:col-span-7">
             <div className="flex items-center justify-between">
-              <h3 className="font-heading text-xl font-bold text-[#2f3337]">Strength Progress</h3>
+              <h3 className="font-heading text-xl font-bold text-[#2f3337]">
+                Strength Progress
+              </h3>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -582,7 +596,9 @@ function DashboardPage() {
             </div>
             <div className="mt-4 flex justify-around text-[10px] font-bold uppercase text-[#5b5f64]">
               {chartPoints.map((point, index) => (
-                <span key={`${point.label}-footer-${index}`}>{point.label}</span>
+                <span key={`${point.label}-footer-${index}`}>
+                  {point.label}
+                </span>
               ))}
             </div>
           </article>
@@ -591,7 +607,9 @@ function DashboardPage() {
             <article className="rounded-2xl bg-white p-6 shadow-[0px_20px_40px_rgba(47,51,55,0.06)]">
               <div className="mb-4 flex items-center gap-2">
                 <ClipboardList className="text-[#0048e2]" size={20} />
-                <h3 className="font-heading text-xl font-bold text-[#2f3337]">Reminders</h3>
+                <h3 className="font-heading text-xl font-bold text-[#2f3337]">
+                  Reminders
+                </h3>
               </div>
 
               <div className="space-y-4">
@@ -625,7 +643,9 @@ function DashboardPage() {
             <article className="rounded-2xl bg-white p-6 shadow-[0px_20px_40px_rgba(47,51,55,0.06)]">
               <div className="mb-4 flex items-center gap-2">
                 <Flame className="text-[#6f567d]" size={20} />
-                <h3 className="font-heading text-xl font-bold text-[#2f3337]">Recent Activity</h3>
+                <h3 className="font-heading text-xl font-bold text-[#2f3337]">
+                  Recent Activity
+                </h3>
               </div>
 
               <div className="space-y-3">
@@ -638,7 +658,9 @@ function DashboardPage() {
                         : ""
                     }`}
                   >
-                    <span className="text-sm text-[#2f3337]">{activity.label}</span>
+                    <span className="text-sm text-[#2f3337]">
+                      {activity.label}
+                    </span>
                     <span className="text-xs font-bold uppercase tracking-wider text-[#5b5f64]">
                       {activity.time}
                     </span>
@@ -674,7 +696,9 @@ function DashboardPage() {
             className="flex flex-col items-center justify-center rounded-2xl bg-[#0052ff]/10 px-4 py-2 text-[#0052ff] transition-all duration-200"
           >
             <Home size={18} />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">Home</span>
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">
+              Home
+            </span>
           </button>
 
           <button
@@ -682,7 +706,9 @@ function DashboardPage() {
             className="flex flex-col items-center justify-center px-4 py-2 text-[#2f3337]/50 transition-all duration-200 hover:text-[#0052ff]"
           >
             <Dumbbell size={18} />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">Workouts</span>
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">
+              Workouts
+            </span>
           </button>
 
           <button
@@ -690,7 +716,9 @@ function DashboardPage() {
             className="flex flex-col items-center justify-center px-4 py-2 text-[#2f3337]/50 transition-all duration-200 hover:text-[#0052ff]"
           >
             <UtensilsCrossed size={18} />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">Diet</span>
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">
+              Diet
+            </span>
           </button>
 
           <button
@@ -698,7 +726,9 @@ function DashboardPage() {
             className="flex flex-col items-center justify-center px-4 py-2 text-[#2f3337]/50 transition-all duration-200 hover:text-[#0052ff]"
           >
             <Moon size={18} />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">Recovery</span>
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">
+              Recovery
+            </span>
           </button>
 
           <button
@@ -706,7 +736,9 @@ function DashboardPage() {
             className="flex flex-col items-center justify-center px-4 py-2 text-[#2f3337]/50 transition-all duration-200 hover:text-[#0052ff]"
           >
             <LogOut size={18} />
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">Logout</span>
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">
+              Logout
+            </span>
           </button>
         </div>
       </nav>
