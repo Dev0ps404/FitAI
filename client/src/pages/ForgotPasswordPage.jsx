@@ -125,9 +125,12 @@ function ForgotPasswordPage() {
             ) : null}
 
             {successMessage ? (
-              <p className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                {successMessage}
-              </p>
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                <p>{successMessage}</p>
+                <p className="mt-2 text-xs text-emerald-800/80">
+                  Check your email for the reset URL and open it to continue.
+                </p>
+              </div>
             ) : null}
 
             <button
