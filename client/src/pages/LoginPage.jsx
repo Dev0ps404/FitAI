@@ -108,12 +108,12 @@ function LoginPage() {
                 >
                   Password
                 </label>
-                <button
-                  type="button"
+                <Link
+                  to="/forgot-password"
                   className="text-xs font-medium text-[#0048e2] transition hover:underline"
                 >
                   Forgot password?
-                </button>
+                </Link>
               </div>
               <input
                 id="password"
