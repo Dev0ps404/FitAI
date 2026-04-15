@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Bell,
   Bot,
@@ -656,13 +656,10 @@ function ProfilePage() {
     .map((error) => getApiErrorMessage(error, "Action failed. Please try again."))
     .join(" ");
 
-  useEffect(() => {
-    if (!showProfileModal) {
-      return;
-    }
-
+  function openProfileModal() {
     setProfileDraft(buildProfileForm(profile));
-  }, [profile, showProfileModal]);
+    setShowProfileModal(true);
+  }
 
   function handleProfileDraftChange(field, value) {
     setProfileDraft((previous) => ({
@@ -808,7 +805,7 @@ function ProfilePage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setShowProfileModal(true)}
+                  onClick={openProfileModal}
                   className="absolute bottom-0 right-0 rounded-full bg-[#0048e2] p-2 text-white shadow-lg transition hover:scale-105"
                   aria-label="Edit profile"
                 >
@@ -836,7 +833,7 @@ function ProfilePage() {
               <div className="flex w-full flex-col gap-3 md:w-auto">
                 <button
                   type="button"
-                  onClick={() => setShowProfileModal(true)}
+                  onClick={openProfileModal}
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0048e2] px-8 py-3 font-bold text-white transition hover:opacity-90 active:scale-95"
                 >
                   <Settings size={16} />

@@ -78,6 +78,11 @@ export const progressApi = {
     const response = await apiClient.post("/progress", payload);
     return extractData(response);
   },
+
+  async remove(progressId) {
+    const response = await apiClient.delete(`/progress/${progressId}`);
+    return extractData(response);
+  },
 };
 
 export const trainerApi = {
