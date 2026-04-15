@@ -18,20 +18,20 @@
     background-image:
       radial-gradient(
         circle at 12% 15%,
-        rgba(56, 189, 248, 0.38),
+        rgba(192, 132, 252, 0.34),
         transparent 34%
       ),
       radial-gradient(
         circle at 82% 14%,
-        rgba(250, 204, 21, 0.3),
+        rgba(167, 139, 250, 0.3),
         transparent 32%
       ),
       radial-gradient(
         circle at 18% 84%,
-        rgba(244, 114, 182, 0.22),
+        rgba(221, 214, 254, 0.38),
         transparent 35%
       ),
-      linear-gradient(145deg, #f8fbff 0%, #ecf7ff 46%, #fff6d8 100%);
+      linear-gradient(145deg, #ffffff 0%, #f7f0ff 48%, #efe3ff 100%);
     background-attachment: fixed;
   }
 

@@ -4,17 +4,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#f8fbff",
-        glass: "#ffffffd9",
+        ink: "#fcf9ff",
+        glass: "#ffffffe0",
+        sky: {
+          50: "#faf5ff",
+          100: "#f3e8ff",
+          200: "#e9d5ff",
+          300: "#d8b4fe",
+          400: "#c084fc",
+        },
         neon: {
-          cyan: "#06b6d4",
-          lime: "#84cc16",
-          amber: "#f59e0b",
+          cyan: "#7c3aed",
+          lime: "#9333ea",
+          amber: "#a855f7",
         },
       },
       boxShadow: {
-        glass: "0 12px 40px rgba(14, 116, 144, 0.14)",
-        neon: "0 0 22px rgba(6, 182, 212, 0.3)",
+        glass: "0 14px 42px rgba(124, 58, 237, 0.16)",
+        neon: "0 0 22px rgba(147, 51, 234, 0.35)",
       },
       fontFamily: {
         heading: ["Rajdhani", "sans-serif"],
@@ -23,10 +30,10 @@ export default {
       keyframes: {
         pulseNeon: {
           "0%, 100%": {
-            boxShadow: "0 0 0 rgba(6, 182, 212, 0)",
+            boxShadow: "0 0 0 rgba(147, 51, 234, 0)",
           },
           "50%": {
-            boxShadow: "0 0 18px rgba(6, 182, 212, 0.4)",
+            boxShadow: "0 0 18px rgba(147, 51, 234, 0.45)",
           },
         },
       },

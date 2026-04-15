@@ -152,21 +152,21 @@ function UserDashboardPage() {
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={progressChartData}>
-                  <CartesianGrid stroke="#bae6fd" strokeDasharray="4 4" />
-                  <XAxis dataKey="date" stroke="#475569" fontSize={12} />
-                  <YAxis stroke="#475569" fontSize={12} />
+                  <CartesianGrid stroke="#e9d5ff" strokeDasharray="4 4" />
+                  <XAxis dataKey="date" stroke="#6b21a8" fontSize={12} />
+                  <YAxis stroke="#6b21a8" fontSize={12} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "#ffffff",
-                      border: "1px solid #7dd3fc",
+                      border: "1px solid #c084fc",
                       borderRadius: "12px",
-                      color: "#0f172a",
+                      color: "#3b0764",
                     }}
                   />
                   <Line
                     type="monotone"
                     dataKey="weight"
-                    stroke="#0891b2"
+                    stroke="#7c3aed"
                     strokeWidth={3}
                     dot={{ r: 3 }}
                     activeDot={{ r: 5 }}
