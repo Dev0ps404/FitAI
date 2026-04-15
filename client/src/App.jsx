@@ -7,6 +7,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import WorkoutPage from "./pages/WorkoutPage";
 import DietPage from "./pages/DietPage";
+import WorkoutLibraryPage from "./pages/WorkoutLibraryPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -30,6 +31,14 @@ function App() {
         element={
           <ProtectedRoute>
             <WorkoutPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/workout-library"
+        element={
+          <ProtectedRoute>
+            <WorkoutLibraryPage />
           </ProtectedRoute>
         }
       />
