@@ -10,6 +10,7 @@ import DietPage from "./pages/DietPage";
 import WorkoutLibraryPage from "./pages/WorkoutLibraryPage";
 import ProfilePage from "./pages/ProfilePage";
 import ProgressPage from "./pages/ProgressPage";
+import AiPage from "./pages/AiPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -65,6 +66,14 @@ function App() {
         element={
           <ProtectedRoute>
             <ProgressPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ai"
+        element={
+          <ProtectedRoute>
+            <AiPage />
           </ProtectedRoute>
         }
       />
