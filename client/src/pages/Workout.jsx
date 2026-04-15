@@ -60,7 +60,8 @@ function Workout() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ workoutId, payload }) => workoutsApi.update(workoutId, payload),
+    mutationFn: ({ workoutId, payload }) =>
+      workoutsApi.update(workoutId, payload),
     onSuccess: async () => {
       setFeedback("Workout updated successfully.");
       setEditingWorkoutId("");
@@ -318,7 +319,11 @@ function Workout() {
             </button>
 
             {editingWorkoutId ? (
-              <button type="button" onClick={resetForm} className="secondary-btn">
+              <button
+                type="button"
+                onClick={resetForm}
+                className="secondary-btn"
+              >
                 Cancel Edit
               </button>
             ) : null}
@@ -330,10 +335,14 @@ function Workout() {
             Workout History
           </h2>
 
-          {isLoading ? <p className="mt-4 text-sm text-zinc-400">Loading workouts...</p> : null}
+          {isLoading ? (
+            <p className="mt-4 text-sm text-zinc-400">Loading workouts...</p>
+          ) : null}
 
           {!isLoading && workouts.length === 0 ? (
-            <p className="mt-4 text-sm text-zinc-400">No workout history yet.</p>
+            <p className="mt-4 text-sm text-zinc-400">
+              No workout history yet.
+            </p>
           ) : null}
 
           <div className="mt-4 space-y-3">
@@ -351,7 +360,8 @@ function Workout() {
                         {workout.name}
                       </h3>
                       <p className="mt-1 text-xs text-zinc-400">
-                        {new Date(workout.date).toLocaleDateString()} • {workout.status}
+                        {new Date(workout.date).toLocaleDateString()} •{" "}
+                        {workout.status}
                       </p>
                     </div>
                     <div className="flex gap-2">
@@ -374,8 +384,9 @@ function Workout() {
                   </div>
 
                   <p className="mt-3 text-sm text-zinc-300">
-                    {firstExercise.name || "Exercise"}: {firstExercise.sets || 0} sets ×{" "}
-                    {firstExercise.reps || 0} reps • {firstExercise.weightKg || 0} kg
+                    {firstExercise.name || "Exercise"}:{" "}
+                    {firstExercise.sets || 0} sets × {firstExercise.reps || 0}{" "}
+                    reps • {firstExercise.weightKg || 0} kg
                   </p>
                 </article>
               );

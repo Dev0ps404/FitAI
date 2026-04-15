@@ -53,7 +53,9 @@ function Diet() {
       setFeedback("Diet log added successfully.");
       setForm(initialFormState);
       await queryClient.invalidateQueries({ queryKey: ["phase1-diet-logs"] });
-      await queryClient.invalidateQueries({ queryKey: ["phase1-diet-summary"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["phase1-diet-summary"],
+      });
     },
     onError: (error) => {
       setFeedback(getApiErrorMessage(error, "Unable to add diet log."));
@@ -67,7 +69,9 @@ function Diet() {
       setEditingDietId("");
       setForm(initialFormState);
       await queryClient.invalidateQueries({ queryKey: ["phase1-diet-logs"] });
-      await queryClient.invalidateQueries({ queryKey: ["phase1-diet-summary"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["phase1-diet-summary"],
+      });
     },
     onError: (error) => {
       setFeedback(getApiErrorMessage(error, "Unable to update diet log."));
@@ -79,7 +83,9 @@ function Diet() {
     onSuccess: async () => {
       setFeedback("Diet log deleted successfully.");
       await queryClient.invalidateQueries({ queryKey: ["phase1-diet-logs"] });
-      await queryClient.invalidateQueries({ queryKey: ["phase1-diet-summary"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["phase1-diet-summary"],
+      });
     },
     onError: (error) => {
       setFeedback(getApiErrorMessage(error, "Unable to delete diet log."));
@@ -314,7 +320,11 @@ function Diet() {
             </button>
 
             {editingDietId ? (
-              <button type="button" onClick={resetForm} className="secondary-btn">
+              <button
+                type="button"
+                onClick={resetForm}
+                className="secondary-btn"
+              >
                 Cancel Edit
               </button>
             ) : null}
@@ -326,7 +336,9 @@ function Diet() {
             Diet History
           </h2>
 
-          {isLoading ? <p className="mt-4 text-sm text-zinc-400">Loading meal logs...</p> : null}
+          {isLoading ? (
+            <p className="mt-4 text-sm text-zinc-400">Loading meal logs...</p>
+          ) : null}
 
           {!isLoading && dietLogs.length === 0 ? (
             <p className="mt-4 text-sm text-zinc-400">No meal logs yet.</p>

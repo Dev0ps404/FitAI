@@ -37,7 +37,11 @@ function Dashboard() {
   });
 
   const { data: todayWorkoutData } = useQuery({
-    queryKey: ["phase1-workouts-today", todayRange.startDate, todayRange.endDate],
+    queryKey: [
+      "phase1-workouts-today",
+      todayRange.startDate,
+      todayRange.endDate,
+    ],
     queryFn: () =>
       workoutsApi.list({
         startDate: todayRange.startDate,
@@ -60,25 +64,36 @@ function Dashboard() {
           Welcome, {authUser?.name || "Athlete"}
         </h1>
         <p className="mt-3 text-sm text-zinc-300 md:text-base">
-          Your current snapshot across weight, calories, and today&apos;s workout.
+          Your current snapshot across weight, calories, and today&apos;s
+          workout.
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <article className="panel-card">
-          <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">Current Weight</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+            Current Weight
+          </p>
           <p className="mt-3 text-3xl font-bold text-lime-200">
-            {typeof latestWeight === "number" ? `${latestWeight} kg` : "No data"}
+            {typeof latestWeight === "number"
+              ? `${latestWeight} kg`
+              : "No data"}
           </p>
         </article>
 
         <article className="panel-card">
-          <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">Calories (30d)</p>
-          <p className="mt-3 text-3xl font-bold text-lime-200">{totalCalories}</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+            Calories (30d)
+          </p>
+          <p className="mt-3 text-3xl font-bold text-lime-200">
+            {totalCalories}
+          </p>
         </article>
 
         <article className="panel-card">
-          <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">Today&apos;s Workout</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+            Today&apos;s Workout
+          </p>
           <p className="mt-3 text-xl font-semibold text-lime-200">
             {todaysWorkout?.name || "No workout logged"}
           </p>
@@ -91,7 +106,10 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Link to="/workout" className="panel-card transition hover:border-lime-400/40">
+        <Link
+          to="/workout"
+          className="panel-card transition hover:border-lime-400/40"
+        >
           <h2 className="text-lg font-semibold uppercase tracking-[0.06em] text-lime-200">
             Workout Tracker
           </h2>
@@ -100,7 +118,10 @@ function Dashboard() {
           </p>
         </Link>
 
-        <Link to="/diet" className="panel-card transition hover:border-lime-400/40">
+        <Link
+          to="/diet"
+          className="panel-card transition hover:border-lime-400/40"
+        >
           <h2 className="text-lg font-semibold uppercase tracking-[0.06em] text-lime-200">
             Diet Tracker
           </h2>
