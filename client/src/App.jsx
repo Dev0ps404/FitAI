@@ -6,6 +6,7 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DashboardPage from "./pages/DashboardPage";
 import WorkoutPage from "./pages/WorkoutPage";
+import DietPage from "./pages/DietPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -29,6 +30,14 @@ function App() {
         element={
           <ProtectedRoute>
             <WorkoutPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/diet"
+        element={
+          <ProtectedRoute>
+            <DietPage />
           </ProtectedRoute>
         }
       />
