@@ -14,6 +14,21 @@ export const workoutsApi = {
     const response = await apiClient.get("/workouts", { params });
     return extractData(response);
   },
+
+  async create(payload) {
+    const response = await apiClient.post("/workouts", payload);
+    return extractData(response);
+  },
+
+  async update(workoutId, payload) {
+    const response = await apiClient.patch(`/workouts/${workoutId}`, payload);
+    return extractData(response);
+  },
+
+  async remove(workoutId) {
+    const response = await apiClient.delete(`/workouts/${workoutId}`);
+    return extractData(response);
+  },
 };
 
 export const dietApi = {
@@ -24,6 +39,21 @@ export const dietApi = {
 
   async list(params = {}) {
     const response = await apiClient.get("/diet", { params });
+    return extractData(response);
+  },
+
+  async create(payload) {
+    const response = await apiClient.post("/diet", payload);
+    return extractData(response);
+  },
+
+  async update(dietLogId, payload) {
+    const response = await apiClient.patch(`/diet/${dietLogId}`, payload);
+    return extractData(response);
+  },
+
+  async remove(dietLogId) {
+    const response = await apiClient.delete(`/diet/${dietLogId}`);
     return extractData(response);
   },
 

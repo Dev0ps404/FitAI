@@ -1,109 +1,69 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AuthRedirectRoute from "./components/auth/AuthRedirectRoute";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
-import AppShell from "./components/layout/AppShell";
-import AiTrainerPage from "./pages/AiTrainerPage";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import OAuthCallbackPage from "./pages/OAuthCallbackPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import SignupPage from "./pages/SignupPage";
-import TrainerDashboardPage from "./pages/TrainerDashboardPage";
-import UserDashboardPage from "./pages/UserDashboardPage";
-import { useAuth } from "./context/AuthContext";
-import { getDashboardPathForRole } from "./utils/roleRoutes";
-
-function DashboardRedirect() {
-  const { authUser } = useAuth();
-
-  return <Navigate to={getDashboardPathForRole(authUser?.role)} replace />;
-}
+import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Dashboard from "./pages/Dashboard";
+import Diet from "./pages/Diet";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Workout from "./pages/Workout";
 
 function App() {
   return (
-    <AppShell>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/login"
-          element={
-            <AuthRedirectRoute>
-              <LoginPage />
-            </AuthRedirectRoute>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <AuthRedirectRoute>
-              <SignupPage />
-            </AuthRedirectRoute>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <AuthRedirectRoute>
-              <ForgotPasswordPage />
-            </AuthRedirectRoute>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <AuthRedirectRoute>
-              <ResetPasswordPage />
-            </AuthRedirectRoute>
-          }
-        />
-        <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardRedirect />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/user/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["user"]}>
-              <UserDashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/trainer/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["trainer"]}>
-              <TrainerDashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["admin"]}>
-              <AdminDashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/ai-trainer"
-          element={
-            <ProtectedRoute>
-              <AiTrainerPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/home" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </AppShell>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+      <Navbar />
+
+      <main className="mx-auto w-full max-w-6xl px-4 md:px-8">
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route
+            path="/login"
+            element={
+              <AuthRedirectRoute>
+                <Login />
+              </AuthRedirectRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <AuthRedirectRoute>
+                <Signup />
+              </AuthRedirectRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/workout"
+            element={
+              <ProtectedRoute>
+                <Workout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/diet"
+            element={
+              <ProtectedRoute>
+                <Diet />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+
+      <Footer />
+    </div>
   );
 }
 

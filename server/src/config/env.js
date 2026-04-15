@@ -1,5 +1,21 @@
 const { z } = require('zod')
 
+const booleanFromEnv = z.preprocess((value) => {
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase()
+
+    if (['true', '1', 'yes', 'on'].includes(normalized)) {
+      return true
+    }
+
+    if (['false', '0', 'no', 'off'].includes(normalized)) {
+      return false
+    }
+  }
+
+  return value
+}, z.boolean())
+
 const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'test', 'production'])
@@ -24,7 +40,7 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
   REFRESH_COOKIE_NAME: z.string().default('fitai_refresh_token'),
   ACCESS_COOKIE_NAME: z.string().default('fitai_access_token'),
-  COOKIE_SECURE: z.coerce.boolean().default(false),
+  COOKIE_SECURE: booleanFromEnv.default(false),
   COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
   PASSWORD_RESET_TOKEN_TTL_MINUTES: z.coerce
     .number()
@@ -57,7 +73,7 @@ const envSchema = z.object({
   FIREBASE_CLIENT_EMAIL: z.string().optional(),
   FIREBASE_PRIVATE_KEY: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
-  SKIP_DB_CONNECTION: z.coerce.boolean().default(false),
+  SKIP_DB_CONNECTION: booleanFromEnv.default(false),
 })
 
 const parsed = envSchema.safeParse(process.env)
