@@ -8,7 +8,7 @@ function ProtectedRoute({ children }) {
   if (isBootstrapping) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center">
-        <div className="rounded-xl border border-violet-300/35 bg-violet-500/15 px-4 py-2 text-sm text-violet-100">
+        <div className="rounded-xl border border-blue-300/35 bg-blue-500/15 px-4 py-2 text-sm text-blue-100">
           Checking session...
         </div>
       </div>
@@ -23,3 +23,4 @@ function ProtectedRoute({ children }) {
 }
 
 export default ProtectedRoute;
+

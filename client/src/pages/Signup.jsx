@@ -69,7 +69,7 @@ function Signup() {
 
         <form className="mt-7 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
               Full Name
             </label>
             <input
@@ -85,7 +85,7 @@ function Signup() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
               Email
             </label>
             <input
@@ -103,7 +103,7 @@ function Signup() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
                 Password
               </label>
               <input
@@ -120,7 +120,7 @@ function Signup() {
             </div>
 
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
                 Confirm Password
               </label>
               <input
@@ -152,11 +152,11 @@ function Signup() {
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-violet-100/80">
+        <p className="mt-6 text-sm text-blue-100/80">
           Already have an account?{" "}
           <Link
             to="/login"
-            className="font-semibold text-violet-300 transition hover:text-violet-200"
+            className="font-semibold text-blue-300 transition hover:text-blue-200"
           >
             Login
           </Link>
@@ -167,3 +167,4 @@ function Signup() {
 }
 
 export default Signup;
+

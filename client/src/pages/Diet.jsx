@@ -235,7 +235,7 @@ function Diet() {
         <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.07em] text-white md:text-4xl">
           Diet Tracker
         </h1>
-        <p className="mt-3 text-sm text-violet-100/80 md:text-base">
+        <p className="mt-3 text-sm text-blue-100/80 md:text-base">
           Track meals with multiple food rows and maintain complete nutrition
           logs.
         </p>
@@ -245,7 +245,7 @@ function Diet() {
         <form className="panel-card space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
                 Date
               </label>
               <input
@@ -258,7 +258,7 @@ function Diet() {
             </div>
 
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
                 Meal Type
               </label>
               <select
@@ -277,7 +277,7 @@ function Diet() {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-200">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-200">
                 Food Entries
               </p>
               <button
@@ -295,7 +295,7 @@ function Diet() {
                 className="rounded-2xl border border-white/15 bg-white/5 p-4"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-[0.14em] text-violet-200/65">
+                  <p className="text-xs uppercase tracking-[0.14em] text-blue-200/65">
                     Food {index + 1}
                   </p>
                   <button
@@ -397,7 +397,7 @@ function Diet() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
               Notes
             </label>
             <textarea
@@ -411,7 +411,7 @@ function Diet() {
           </div>
 
           {feedback ? (
-            <p className="rounded-xl border border-violet-300/35 bg-violet-500/15 px-4 py-3 text-sm text-violet-100">
+            <p className="rounded-xl border border-blue-300/35 bg-blue-500/15 px-4 py-3 text-sm text-blue-100">
               {feedback}
             </p>
           ) : null}
@@ -443,13 +443,13 @@ function Diet() {
           </h2>
 
           {isLoading ? (
-            <p className="mt-4 text-sm text-violet-200/60">
+            <p className="mt-4 text-sm text-blue-200/60">
               Loading meal logs...
             </p>
           ) : null}
 
           {!isLoading && dietLogs.length === 0 ? (
-            <p className="mt-4 text-sm text-violet-200/60">No meal logs yet.</p>
+            <p className="mt-4 text-sm text-blue-200/60">No meal logs yet.</p>
           ) : null}
 
           <div className="mt-4 space-y-3">
@@ -460,10 +460,10 @@ function Diet() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-[0.06em] text-violet-100">
+                    <h3 className="text-sm font-semibold uppercase tracking-[0.06em] text-blue-100">
                       {dietLog.mealType}
                     </h3>
-                    <p className="mt-1 text-xs text-violet-200/65">
+                    <p className="mt-1 text-xs text-blue-200/65">
                       {new Date(dietLog.date).toLocaleDateString()}
                     </p>
                   </div>
@@ -471,7 +471,7 @@ function Diet() {
                     <button
                       type="button"
                       onClick={() => startEdit(dietLog)}
-                      className="rounded-lg border border-white/20 px-2 py-1 text-xs text-violet-100 transition-all duration-300 hover:border-violet-300/60 hover:bg-violet-500/15"
+                      className="rounded-lg border border-white/20 px-2 py-1 text-xs text-blue-100 transition-all duration-300 hover:border-blue-300/60 hover:bg-blue-500/15"
                     >
                       Edit
                     </button>
@@ -486,7 +486,7 @@ function Diet() {
                   </div>
                 </div>
 
-                <ul className="mt-3 space-y-1 text-sm text-violet-100/80">
+                <ul className="mt-3 space-y-1 text-sm text-blue-100/80">
                   {(dietLog.foods || []).slice(0, 3).map((food, index) => (
                     <li key={`${dietLog._id}-${food.name}-${index}`}>
                       {food.name}: {food.calories || 0} kcal •{" "}
@@ -494,7 +494,7 @@ function Diet() {
                     </li>
                   ))}
                   {(dietLog.foods || []).length > 3 ? (
-                    <li className="text-xs text-violet-200/65">
+                    <li className="text-xs text-blue-200/65">
                       + {(dietLog.foods || []).length - 3} more foods
                     </li>
                   ) : null}
@@ -509,3 +509,4 @@ function Diet() {
 }
 
 export default Diet;
+

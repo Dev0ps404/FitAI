@@ -166,7 +166,7 @@ function UserDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="weight"
-                    stroke="#7c3aed"
+                    stroke="#2563eb"
                     strokeWidth={3}
                     dot={{ r: 3 }}
                     activeDot={{ r: 5 }}

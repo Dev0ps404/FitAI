@@ -38,8 +38,8 @@ function Landing() {
   return (
     <section className="subtle-fade-in space-y-14 py-8 md:py-12">
       <div className="hero-card relative overflow-hidden rounded-3xl border border-white/15 p-6 md:p-10">
-        <div className="absolute -left-20 -top-20 h-48 w-48 rounded-full bg-violet-500/35 blur-3xl" />
-        <div className="absolute -bottom-20 right-0 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl" />
+        <div className="absolute -left-20 -top-20 h-48 w-48 rounded-full bg-blue-500/35 blur-3xl" />
+        <div className="absolute -bottom-20 right-0 h-56 w-56 rounded-full bg-cyan-500/20 blur-3xl" />
 
         <div className="relative z-10 max-w-3xl">
           <p className="neon-chip mb-5 inline-flex px-4 py-1">
@@ -48,7 +48,7 @@ function Landing() {
           <h1 className="font-heading text-4xl font-bold uppercase leading-tight tracking-[0.08em] text-white md:text-6xl">
             Train smarter with one app for workouts, diet, and progress
           </h1>
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-violet-100/80 md:text-base">
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-blue-100/80 md:text-base">
             FitAI helps you move from random effort to structured fitness with a
             smooth workflow: plan, track, improve.
           </p>
@@ -80,10 +80,10 @@ function Landing() {
               key={feature.title}
               className="panel-card transition-all duration-300 hover:scale-[1.02]"
             >
-              <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-violet-100">
+              <h3 className="font-heading text-lg font-semibold uppercase tracking-[0.06em] text-blue-100">
                 {feature.title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-violet-100/75">
+              <p className="mt-3 text-sm leading-relaxed text-blue-100/75">
                 {feature.description}
               </p>
             </article>
@@ -94,7 +94,7 @@ function Landing() {
       <section className="grid gap-5 md:grid-cols-2">
         <article className="panel-card">
           <h2 className="section-title">About FitAI</h2>
-          <p className="mt-4 text-sm leading-relaxed text-violet-100/80 md:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-blue-100/80 md:text-base">
             FitAI is built for real consistency. Instead of managing multiple
             apps, you can track workouts, nutrition, and your daily fitness
             numbers in one connected experience.
@@ -103,7 +103,7 @@ function Landing() {
 
         <article className="panel-card">
           <h2 className="section-title">User Flow</h2>
-          <ol className="mt-4 space-y-3 text-sm text-violet-100/80">
+          <ol className="mt-4 space-y-3 text-sm text-blue-100/80">
             <li>1. Visit landing page</li>
             <li>2. Signup or login</li>
             <li>3. Reach dashboard</li>
@@ -120,10 +120,10 @@ function Landing() {
               key={item.name}
               className="panel-card transition-all duration-300 hover:scale-[1.02]"
             >
-              <p className="text-sm leading-relaxed text-violet-100/85">
+              <p className="text-sm leading-relaxed text-blue-100/85">
                 “{item.quote}”
               </p>
-              <footer className="mt-4 text-xs uppercase tracking-[0.14em] text-violet-200">
+              <footer className="mt-4 text-xs uppercase tracking-[0.14em] text-blue-200">
                 {item.name}
               </footer>
             </blockquote>
@@ -135,3 +135,4 @@ function Landing() {
 }
 
 export default Landing;
+

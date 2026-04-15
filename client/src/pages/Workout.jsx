@@ -241,7 +241,7 @@ function Workout() {
         <h1 className="font-heading text-3xl font-bold uppercase tracking-[0.07em] text-white md:text-4xl">
           Workout Tracker
         </h1>
-        <p className="mt-3 text-sm text-violet-100/80 md:text-base">
+        <p className="mt-3 text-sm text-blue-100/80 md:text-base">
           Add, edit, and delete workouts with multiple exercise rows per
           session.
         </p>
@@ -251,7 +251,7 @@ function Workout() {
         <form className="panel-card space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
                 Workout Name
               </label>
               <input
@@ -264,7 +264,7 @@ function Workout() {
             </div>
 
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+              <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
                 Date
               </label>
               <input
@@ -278,7 +278,7 @@ function Workout() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
               Status
             </label>
             <select
@@ -295,7 +295,7 @@ function Workout() {
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-200">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-200">
                 Exercises
               </p>
               <button
@@ -313,7 +313,7 @@ function Workout() {
                 className="rounded-2xl border border-white/15 bg-white/5 p-4"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-[0.14em] text-violet-200/65">
+                  <p className="text-xs uppercase tracking-[0.14em] text-blue-200/65">
                     Exercise {index + 1}
                   </p>
                   <button
@@ -416,7 +416,7 @@ function Workout() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
               Notes
             </label>
             <textarea
@@ -430,7 +430,7 @@ function Workout() {
           </div>
 
           {feedback ? (
-            <p className="rounded-xl border border-violet-300/35 bg-violet-500/15 px-4 py-3 text-sm text-violet-100">
+            <p className="rounded-xl border border-blue-300/35 bg-blue-500/15 px-4 py-3 text-sm text-blue-100">
               {feedback}
             </p>
           ) : null}
@@ -462,13 +462,13 @@ function Workout() {
           </h2>
 
           {isLoading ? (
-            <p className="mt-4 text-sm text-violet-200/60">
+            <p className="mt-4 text-sm text-blue-200/60">
               Loading workouts...
             </p>
           ) : null}
 
           {!isLoading && workouts.length === 0 ? (
-            <p className="mt-4 text-sm text-violet-200/60">
+            <p className="mt-4 text-sm text-blue-200/60">
               No workout history yet.
             </p>
           ) : null}
@@ -481,10 +481,10 @@ function Workout() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-semibold uppercase tracking-[0.06em] text-violet-100">
+                    <h3 className="text-sm font-semibold uppercase tracking-[0.06em] text-blue-100">
                       {workout.name}
                     </h3>
-                    <p className="mt-1 text-xs text-violet-200/65">
+                    <p className="mt-1 text-xs text-blue-200/65">
                       {new Date(workout.date).toLocaleDateString()} •{" "}
                       {workout.status}
                     </p>
@@ -493,7 +493,7 @@ function Workout() {
                     <button
                       type="button"
                       onClick={() => startEdit(workout)}
-                      className="rounded-lg border border-white/20 px-2 py-1 text-xs text-violet-100 transition-all duration-300 hover:border-violet-300/60 hover:bg-violet-500/15"
+                      className="rounded-lg border border-white/20 px-2 py-1 text-xs text-blue-100 transition-all duration-300 hover:border-blue-300/60 hover:bg-blue-500/15"
                     >
                       Edit
                     </button>
@@ -508,7 +508,7 @@ function Workout() {
                   </div>
                 </div>
 
-                <ul className="mt-3 space-y-1 text-sm text-violet-100/80">
+                <ul className="mt-3 space-y-1 text-sm text-blue-100/80">
                   {(workout.exercises || [])
                     .slice(0, 3)
                     .map((exercise, index) => (
@@ -518,7 +518,7 @@ function Workout() {
                       </li>
                     ))}
                   {(workout.exercises || []).length > 3 ? (
-                    <li className="text-xs text-violet-200/65">
+                    <li className="text-xs text-blue-200/65">
                       + {(workout.exercises || []).length - 3} more exercises
                     </li>
                   ) : null}
@@ -533,3 +533,4 @@ function Workout() {
 }
 
 export default Workout;
+

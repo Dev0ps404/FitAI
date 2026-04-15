@@ -57,7 +57,7 @@ function Login() {
 
         <form className="mt-7 space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
               Email
             </label>
             <input
@@ -74,7 +74,7 @@ function Login() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-violet-200/75">
+            <label className="mb-2 block text-xs uppercase tracking-[0.14em] text-blue-200/75">
               Password
             </label>
             <input
@@ -105,11 +105,11 @@ function Login() {
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-violet-100/80">
+        <p className="mt-6 text-sm text-blue-100/80">
           No account yet?{" "}
           <Link
             to="/signup"
-            className="font-semibold text-violet-300 transition hover:text-violet-200"
+            className="font-semibold text-blue-300 transition hover:text-blue-200"
           >
             Create one
           </Link>
@@ -120,3 +120,4 @@ function Login() {
 }
 
 export default Login;
+
