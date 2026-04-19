@@ -111,6 +111,11 @@ export const bookingApi = {
     return extractData(response);
   },
 
+  async pay(bookingId, payload) {
+    const response = await apiClient.patch(`/bookings/${bookingId}/pay`, payload);
+    return extractData(response);
+  },
+
   async updateStatus(bookingId, status) {
     const response = await apiClient.patch(`/bookings/${bookingId}/status`, {
       status,

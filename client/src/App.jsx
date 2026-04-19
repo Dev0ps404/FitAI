@@ -11,6 +11,7 @@ import WorkoutLibraryPage from "./pages/WorkoutLibraryPage";
 import ProfilePage from "./pages/ProfilePage";
 import ProgressPage from "./pages/ProgressPage";
 import AiPage from "./pages/AiPage";
+import PaymentPage from "./pages/PaymentPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -74,6 +75,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AiPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payment"
+        element={
+          <ProtectedRoute>
+            <PaymentPage />
           </ProtectedRoute>
         }
       />

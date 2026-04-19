@@ -24,6 +24,44 @@ const bookingIdParamSchema = z.object({
   bookingId: objectIdSchema,
 })
 
+const bookingPaymentSchema = z
+  .object({
+    paymentMethod: z.enum(['card', 'wallet']).default('card'),
+    promoCode: z
+      .string()
+      .trim()
+      .max(32)
+      .transform((value) => value.toUpperCase())
+      .optional(),
+    cardholderName: z.string().trim().min(2).max(80).optional(),
+    cardLast4: z
+      .string()
+      .trim()
+      .regex(/^\d{4}$/)
+      .optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.paymentMethod !== 'card') {
+      return
+    }
+
+    if (!value.cardholderName) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['cardholderName'],
+        message: 'cardholderName is required for card payment',
+      })
+    }
+
+    if (!value.cardLast4) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['cardLast4'],
+        message: 'cardLast4 is required for card payment',
+      })
+    }
+  })
+
 const bookingListQuerySchema = paginationQuerySchema.extend({
   status: z.enum(['pending', 'confirmed', 'cancelled', 'completed']).optional(),
 })
@@ -32,5 +70,6 @@ module.exports = {
   createBookingSchema,
   bookingStatusSchema,
   bookingIdParamSchema,
+  bookingPaymentSchema,
   bookingListQuerySchema,
 }

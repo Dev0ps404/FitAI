@@ -10,6 +10,52 @@ const { getPagination, getPaginationMeta } = require('../../utils/pagination')
 const { isSameId } = require('../../utils/id')
 const { createNotification } = require('../../services/notification.service')
 
+const PROMO_DISCOUNT_RATES = Object.freeze({
+  KINETIC10: 0.1,
+  ELITE20: 0.2,
+  FIRST15: 0.15,
+})
+
+function roundCurrency(value) {
+  const amount = Number(value)
+
+  if (!Number.isFinite(amount)) {
+    return 0
+  }
+
+  return Number(amount.toFixed(2))
+}
+
+function buildPaymentSummary({ booking, paymentMethod, promoCode }) {
+  const slotStart = new Date(booking.slotStart).getTime()
+  const slotEnd = new Date(booking.slotEnd).getTime()
+  const durationHours = Math.max((slotEnd - slotStart) / (1000 * 60 * 60), 1)
+  const trainerRate = Math.max(Number(booking.trainer?.hourlyRate) || 0, 49.99)
+  const subtotal = roundCurrency(durationHours * trainerRate)
+  const normalizedPromo = promoCode || null
+  const discountRate = normalizedPromo
+    ? PROMO_DISCOUNT_RATES[normalizedPromo] || 0
+    : 0
+  const discount = roundCurrency(subtotal * discountRate)
+  const taxableAmount = Math.max(0, subtotal - discount)
+  const tax = roundCurrency(taxableAmount * 0.085)
+  const processingFee = paymentMethod === 'wallet' ? 0 : 1.49
+  const total = roundCurrency(taxableAmount + tax + processingFee)
+
+  return {
+    currency: 'USD',
+    subtotal,
+    discount,
+    tax,
+    processingFee,
+    total,
+    durationHours: roundCurrency(durationHours),
+    paymentMethod,
+    promoCode: normalizedPromo,
+    status: 'paid',
+  }
+}
+
 async function getTrainerProfileForRequestingUser(user) {
   if (user.role !== USER_ROLES.TRAINER) {
     return null
@@ -224,9 +270,100 @@ const cancelBooking = asyncHandler(async (req, res) => {
   })
 })
 
+const processBookingPayment = asyncHandler(async (req, res) => {
+  const { bookingId } = req.validatedParams || req.params
+  const payload = req.validatedBody || req.body
+
+  const booking = await Booking.findById(bookingId).populate({
+    path: 'trainer',
+    populate: {
+      path: 'user',
+      select: 'name email',
+    },
+  })
+
+  if (!booking) {
+    throw new ApiError(404, 'Booking not found')
+  }
+
+  if (
+    req.user.role === USER_ROLES.USER &&
+    !isSameId(booking.user, req.user._id)
+  ) {
+    throw new ApiError(403, 'You are not authorized to pay this booking')
+  }
+
+  if (booking.status === 'cancelled') {
+    throw new ApiError(409, 'Cannot process payment for cancelled booking')
+  }
+
+  const paymentSummary = buildPaymentSummary({
+    booking,
+    paymentMethod: payload.paymentMethod,
+    promoCode: payload.promoCode,
+  })
+
+  const wasAlreadyPaid = booking.paymentStatus === 'paid'
+
+  if (!wasAlreadyPaid) {
+    booking.paymentStatus = 'paid'
+
+    if (booking.status === 'pending') {
+      booking.status = 'confirmed'
+    }
+
+    if (!booking.stripePaymentIntentId) {
+      booking.stripePaymentIntentId = `sim_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+    }
+
+    await booking.save()
+
+    await createNotification({
+      userId: booking.user,
+      type: 'booking',
+      title: 'Payment Confirmed',
+      message: `Payment of $${paymentSummary.total.toFixed(2)} received for your session booking.`,
+      io: req.app.get('io'),
+      meta: {
+        bookingId: booking._id,
+        paymentStatus: booking.paymentStatus,
+        amount: paymentSummary.total,
+      },
+    })
+
+    if (booking.trainer?.user?._id) {
+      await createNotification({
+        userId: booking.trainer.user._id,
+        type: 'booking',
+        title: 'Client Payment Received',
+        message: `${req.user.name} completed payment for an upcoming session.`,
+        io: req.app.get('io'),
+        meta: {
+          bookingId: booking._id,
+          paymentStatus: booking.paymentStatus,
+          amount: paymentSummary.total,
+        },
+      })
+    }
+  }
+
+  res.status(200).json({
+    success: true,
+    message:
+      wasAlreadyPaid
+        ? 'Booking is already paid'
+        : 'Payment processed successfully',
+    data: {
+      booking,
+      payment: paymentSummary,
+    },
+  })
+})
+
 module.exports = {
   createBooking,
   listBookings,
   updateBookingStatus,
   cancelBooking,
+  processBookingPayment,
 }

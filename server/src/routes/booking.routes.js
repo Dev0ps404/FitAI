@@ -7,6 +7,7 @@ const {
   createBookingSchema,
   bookingStatusSchema,
   bookingIdParamSchema,
+  bookingPaymentSchema,
   bookingListQuerySchema,
 } = require('../validators/booking.validator')
 const {
@@ -14,6 +15,7 @@ const {
   listBookings,
   updateBookingStatus,
   cancelBooking,
+  processBookingPayment,
 } = require('../controllers/booking/booking.controller')
 
 const bookingRouter = Router()
@@ -41,6 +43,12 @@ bookingRouter.patch(
   '/:bookingId/cancel',
   validateRequest({ params: bookingIdParamSchema }),
   cancelBooking,
+)
+bookingRouter.patch(
+  '/:bookingId/pay',
+  authorizeRoles(USER_ROLES.USER, USER_ROLES.ADMIN),
+  validateRequest({ params: bookingIdParamSchema, body: bookingPaymentSchema }),
+  processBookingPayment,
 )
 
 module.exports = bookingRouter
